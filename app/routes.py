@@ -1,9 +1,15 @@
 # FLASK IMPORTS
-from flask import Flask, redirect, session, render_template, flash, get_flashed_messages, send_from_directory, jsonify, abort, redirect, request, url_for, make_response
+from flask import Flask, redirect, session, render_template, render_template_string, flash, get_flashed_messages, send_from_directory, jsonify, abort, redirect, request, url_for, make_response
 from app import app
 from app.db import indicators_atlas, indicators_atlas_cohorte
 from app.scripts.query_generator_atlas import *
 from datetime import timedelta
+from app.linkedin_oauth import linkedin_bp
+import os
+from app.auth_utils import ADMIN_USERNAME, ADMIN_PASSWORD, admin_required
+from app.socials import post_to_linkedin
+
+app.register_blueprint(linkedin_bp)
 
 
 app.config['SESSION_PERMANENT'] = True
@@ -17,29 +23,6 @@ app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 def atlas(querystring='/inds=+&base=satLayer'):
     atlas_indicators = list(indicators_atlas.find({}, {"_id": 0, "data" : 0}))
     atlas_indicators_cohorte = list(indicators_atlas_cohorte.find({}, {"_id": 0, "data" : 0}))
-    # if request.method == 'POST':
-    #     request_data = request.get_json()
-    #     if request_data and request_data.get('name') == 'main-query':
-    #         indicator = json.loads(request_data.get('indicator'))
-    #         output = query_atlas(indicator)
-    #         print(output)
-    #         return {
-    #             'output': output
-    #         }
-    #     elif request_data and request_data.get('name') == 'tendency-query':
-    #         indicator = json.loads(request_data.get('indicator'))
-    #         rls_codes = json.loads(request_data.get('rls_codes'))
-    #         output = query_tendencies(indicator, rls_codes)
-    #         return {
-    #             'output': output
-    #         }
-    #     elif request_data and request_data.get('name') == 'coh-tendency-query':
-    #         indicator = json.loads(request_data.get('indicator'))
-    #         coh_codes = json.loads(request_data.get('coh_codes'))
-    #         output = query_tendencies_coh(indicator, coh_codes)
-    #         return {
-    #             'output': output
-    #         }
     return render_template('index.html', 
                            title='ApexMachina — Atlas', 
                            atlas_indicators=atlas_indicators,
@@ -71,4 +54,41 @@ def indicator_query():
     return jsonify(output)
 
 
+
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    error = None
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session["is_admin"] = True
+            next_url = request.args.get("next") or url_for("index")
+            return redirect(next_url)
+        else:
+            error = "Invalid credentials"
+
+    return render_template("admin_login.html", error=error)
+
+@app.route("/admin/logout")
+def admin_logout():
+    # Remove admin flag from session
+    session.pop("is_admin", None)
+    
+    # Optionally redirect to home or login
+    return redirect(url_for("admin_login"))
+
+
+@app.route("/admin/linkedin/test-post")
+@admin_required
+def linkedin_test_post():
+    person_urn = os.environ.get("LINKEDIN_PERSON_URN")
+    if not person_urn:
+        return "LINKEDIN_PERSON_URN not set in .env", 500
+
+    res = post_to_linkedin(person_urn, "Testing an automatic post via python app")
+    return f"Posted! Response: {res}"
 

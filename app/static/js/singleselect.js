@@ -1,4 +1,4 @@
-function InitSelect() {
+function initSelect() {
     $('.dropdown-button').click(function (e) {
         e.stopPropagation(); // Prevent click from bubbling up
 

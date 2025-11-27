@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>LinkedIn Connect</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='package/icons-1.9.1/font/bootstrap-icons.css') }}">
+    <style>
+        body {
+            font-family: Inter, sans-serif;
+            margin:0;
+            height:100vh;
+            width:100vw;
+        }
+
+        .error {
+            color: red;
+            margin:0!important
+        }
+
+        .top-row{
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size:1.225rem;
+            color:#0D2138;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            width: 100%;
+            height: 100%;
+            display:flex;
+            flex-direction: column;
+            gap:16px;
+            padding-top:200px;
+            box-sizing: border-box;
+        }
+
+        form{
+            width:100%;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius:7px;
+            border: 1px solid #cfe2ff!important;
+            font-family: Inter;
+            background:#eaf1ff7f;
+            box-sizing: border-box;
+            font-size:14px;
+        }
+
+        input:focus{
+            outline:solid 2px #2F6DDB;
+        }
+
+        button {
+            width:100%;
+            border-radius:50px;
+            padding: 12px 18px;
+            font-size:14px;
+            background:#2F6DDB;
+            color:white;
+            font-family: Inter;
+            cursor: pointer;
+            outline:none;
+            border:none;
+            margin-top:20px;
+        }
+        .nomarg{
+            margin:0!important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="top-row">
+            <h1>Connect LinkedIn</h1>
+            <i class="bi bi-linkedin" style="color:#0B66C2;font-size:3rem;"></i>
+        </div>
+
+        <p class="nomarg">Click the button below to connect this app to LinkedIn.</p>
+
+        <a href="{{ auth_url }}">
+            <button>Connect with LinkedIn</button>
+        </a>
+    </div>
+
+</body>
+
+</html>

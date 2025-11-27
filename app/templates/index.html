@@ -1,82 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <!-- Basic Metadata -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+{% block title %}{{ title }}{% endblock %}
 
-    <!-- Primary Meta Tags -->
-    <title>{{ title }}</title>
-    <meta name="description"
-        content="ApexMachina combines methodological rigor and industry expertise to turn your data into strategic assets. Explore our data science and artificial intelligence solutions." />
-    <meta name="keywords"
-        content="data science, artificial intelligence, data analytics, machine learning, ApexMachina, AI, strategy, big data, automation" />
-    <meta name="author" content="ApexMachina" />
-    <meta name="robots" content="index, follow" />
-    <meta name="language" content="en" />
-    <meta name="theme-color" content="#0f172a" />
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.apexmachina.com/" />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="ApexMachina — Data Science & AI Strategy" />
-    <meta property="og:description"
-        content="Transform your data into a competitive advantage with ApexMachina’s expertise in AI and Data Science." />
-    <meta property="og:url" content="https://www.apexmachina.com/" />
-    <meta property="og:image" content="https://www.apexmachina.com/static/image/social/og-image.jpg" />
-    <meta property="og:site_name" content="ApexMachina" />
-    <meta property="og:locale" content="en_US" />
-
-    <!-- Twitter / X Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ApexMachina — Data Science & AI Strategy" />
-    <meta name="twitter:description" content="Discover how ApexMachina transforms data into strategic decisions." />
-    <meta name="twitter:image" content="https://www.apexmachina.com/static/image/social/twitter-card.jpg" />
-    <meta name="twitter:creator" content="@ApexMachina" />
-
-    <!-- Favicon and App Icons -->
-    <link rel="icon" href="{{ url_for('static', filename='image/logo/favicon.svg') }}" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='image/logo/favicon.svg') }}" />
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Styles and Scripts -->
+{% block head %}
+    {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gradients.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/singleselect.css') }}">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
-    <script src="{{ url_for('static', filename='package/fontawesome-free-7.0.1-web/js/all.min.js') }}" defer></script>
-    <link rel="stylesheet"
-        href="{{ url_for('static', filename='package/fontawesome-free-7.0.1-web/css/all.min.css') }}">
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='package/icons-1.9.1/font/bootstrap-icons.css') }}">
-    <link rel="stylesheet"
-        href="{{ url_for('static', filename='package/bootstrap-5.1.3/dist/css/bootstrap.min.css') }}">
-    <script src="{{ url_for('static', filename='package/bootstrap-5.1.3/dist/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- OpenLayers -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='package/ol-6.9.0/css/ol.css') }}">
-    <script src="{{ url_for('static', filename='package/ol-6.9.0/build/ol.js') }}"></script>
-    <!-- jQuery -->
-    <script src="{{ url_for('static', filename='package/jquery-3.5.1/jquery-3.5.1.min.js') }}"></script>
-    <!-- Ion.RangeSlider -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='package/mdl-1.3.0/material-plugins.min.css') }}">
-    <script src="{{ url_for('static', filename='package/mdl-1.3.0/ion.rangeSlider.min.js') }}"></script>
-    <!-- Include Sortable.js library -->
-    <script src="{{ url_for('static', filename='package/Sortable-1.14.0/Sortable.min.js') }}"></script>
-    <!-- Highcharts -->
-    <script src="{{ url_for('static', filename='package/highcharts/highcharts.js') }}"></script>
-    <script src="{{ url_for('static', filename='package/highcharts/highcharts-more.js') }}"></script>
-    <script src="{{ url_for('static', filename='package/highcharts/exporting.js') }}"></script>
-    <script src="{{ url_for('static', filename='package/highcharts/export-data.js') }}"></script>
-    <script src="{{ url_for('static', filename='package/highcharts/accessibility.js') }}"></script>
-    <script src="{{ url_for('static', filename='package/highcharts/histogram-bellcurve.js') }}"></script>
 
     <script>
         atlas_indicators = {{ atlas_indicators | tojson }}
@@ -89,9 +19,9 @@
         var selected_year_ts1 = 1996;
         var selected_year_ts2 = 2022;
     </script>
-</head>
+{% endblock %}
 
-<body>
+{% block content %}
     <div id="loading-overlay">
         <div class="loading-content">
             <img src="{{ url_for('static', filename='image/logo/apex-machina-renv-fav.svg') }}" alt=""
@@ -237,124 +167,9 @@
                                 <span>Veuillez choisir une année</span>
                             </div>
                             <div class="dropdown-row">
-                                <div class="dropdown" id="year-select">
-                                    <div class="dropdown-button">
-                                        <span class="grey">2022</span>
-                                        <div class="chevron-toggle">
-                                            <i class="fa-solid fa-chevron-down"></i>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown-content">
-                                        <label>
-                                            <input type="radio" value="1996" name="year-sel" data-name="1996">
-                                            <div>1996</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="1997" name="year-sel" data-name="1997">
-                                            <div>1997</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="1998" name="year-sel" data-name="1998">
-                                            <div>1998</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="1999" name="year-sel" data-name="1999">
-                                            <div>1999</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2000" name="year-sel" data-name="2000">
-                                            <div>2000</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2001" name="year-sel" data-name="2001">
-                                            <div>2001</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2002" name="year-sel" data-name="2002">
-                                            <div>2002</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2003" name="year-sel" data-name="2003">
-                                            <div>2003</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2004" name="year-sel" data-name="2004">
-                                            <div>2004</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2005" name="year-sel" data-name="2005">
-                                            <div>2005</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2006" name="year-sel" data-name="2006">
-                                            <div>2006</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2007" name="year-sel" data-name="2007">
-                                            <div>2007</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2008" name="year-sel" data-name="2008">
-                                            <div>2008</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2009" name="year-sel" data-name="2009">
-                                            <div>2009</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2010" name="year-sel" data-name="2010">
-                                            <div>2010</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2011" name="year-sel" data-name="2011">
-                                            <div>2011</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2012" name="year-sel" data-name="2012">
-                                            <div>2012</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2013" name="year-sel" data-name="2013">
-                                            <div>2013</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2014" name="year-sel" data-name="2014">
-                                            <div>2014</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2015" name="year-sel" data-name="2015">
-                                            <div>2015</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2016" name="year-sel" data-name="2016">
-                                            <div>2016</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2017" name="year-sel" data-name="2017">
-                                            <div>2017</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2018" name="year-sel" data-name="2018">
-                                            <div>2018</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2019" name="year-sel" data-name="2019">
-                                            <div>2019</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2020" name="year-sel" data-name="2020">
-                                            <div>2020</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2021" name="year-sel" data-name="2021">
-                                            <div>2021</div>
-                                        </label>
-                                        <label>
-                                            <input type="radio" value="2022" name="year-sel" data-name="2022" checked>
-                                            <div>2022</div>
-                                        </label>
-
-                                    </div>
+                                <div class="flex-row" id="yearSelSliderRow">
+                                    <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022" data-step="1"
+                                    data-from="2022" data-atlas="year-sel-slider">
                                 </div>
                             </div>
                         </div>
@@ -364,246 +179,9 @@
                                 <span>Veuillez choisir la période</span>
                             </div>
                             <div class="dropdown-row">
-                                <div class="flex-row">
-                                    <div class="dropdown" id="serie-select1">
-                                        <div class="dropdown-button">
-                                            <span class="grey">1996</span>
-                                            <div class="chevron-toggle">
-                                                <i class="fa-solid fa-chevron-down"></i>
-                                            </div>
-                                        </div>
-                                        <div class="dropdown-content">
-                                            <label>
-                                                <input type="radio" value="1996" name="ts1-year-sel" data-name="1996" checked>
-                                                <div>1996</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="1997" name="ts1-year-sel" data-name="1997">
-                                                <div>1997</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="1998" name="ts1-year-sel" data-name="1998">
-                                                <div>1998</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="1999" name="ts1-year-sel" data-name="1999">
-                                                <div>1999</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2000" name="ts1-year-sel" data-name="2000">
-                                                <div>2000</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2001" name="ts1-year-sel" data-name="2001">
-                                                <div>2001</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2002" name="ts1-year-sel" data-name="2002">
-                                                <div>2002</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2003" name="ts1-year-sel" data-name="2003">
-                                                <div>2003</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2004" name="ts1-year-sel" data-name="2004">
-                                                <div>2004</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2005" name="ts1-year-sel" data-name="2005">
-                                                <div>2005</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2006" name="ts1-year-sel" data-name="2006">
-                                                <div>2006</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2007" name="ts1-year-sel" data-name="2007">
-                                                <div>2007</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2008" name="ts1-year-sel" data-name="2008">
-                                                <div>2008</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2009" name="ts1-year-sel" data-name="2009">
-                                                <div>2009</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2010" name="ts1-year-sel" data-name="2010">
-                                                <div>2010</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2011" name="ts1-year-sel" data-name="2011">
-                                                <div>2011</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2012" name="ts1-year-sel" data-name="2012">
-                                                <div>2012</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2013" name="ts1-year-sel" data-name="2013">
-                                                <div>2013</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2014" name="ts1-year-sel" data-name="2014">
-                                                <div>2014</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2015" name="ts1-year-sel" data-name="2015">
-                                                <div>2015</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2016" name="ts1-year-sel" data-name="2016">
-                                                <div>2016</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2017" name="ts1-year-sel" data-name="2017">
-                                                <div>2017</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2018" name="ts1-year-sel" data-name="2018">
-                                                <div>2018</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2019" name="ts1-year-sel" data-name="2019">
-                                                <div>2019</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2020" name="ts1-year-sel" data-name="2020">
-                                                <div>2020</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2021" name="ts1-year-sel" data-name="2021">
-                                                <div>2021</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2022" name="ts1-year-sel" data-name="2022">
-                                                <div>2022</div>
-                                            </label>
-
-                                        </div>
-                                    </div>
-                                    <div class="dropdown" id="serie-select2">
-                                        <div class="dropdown-button">
-                                            <span class="grey">2022</span>
-                                            <div class="chevron-toggle">
-                                                <i class="fa-solid fa-chevron-down"></i>
-                                            </div>
-                                        </div>
-                                        <div class="dropdown-content">
-                                            <label>
-                                                <input type="radio" value="1996" name="ts2-year-sel" data-name="1996">
-                                                <div>1996</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="1997" name="ts2-year-sel" data-name="1997">
-                                                <div>1997</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="1998" name="ts2-year-sel" data-name="1998">
-                                                <div>1998</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="1999" name="ts2-year-sel" data-name="1999">
-                                                <div>1999</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2000" name="ts2-year-sel" data-name="2000">
-                                                <div>2000</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2001" name="ts2-year-sel" data-name="2001">
-                                                <div>2001</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2002" name="ts2-year-sel" data-name="2002">
-                                                <div>2002</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2003" name="ts2-year-sel" data-name="2003">
-                                                <div>2003</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2004" name="ts2-year-sel" data-name="2004">
-                                                <div>2004</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2005" name="ts2-year-sel" data-name="2005">
-                                                <div>2005</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2006" name="ts2-year-sel" data-name="2006">
-                                                <div>2006</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2007" name="ts2-year-sel" data-name="2007">
-                                                <div>2007</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2008" name="ts2-year-sel" data-name="2008">
-                                                <div>2008</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2009" name="ts2-year-sel" data-name="2009">
-                                                <div>2009</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2010" name="ts2-year-sel" data-name="2010">
-                                                <div>2010</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2011" name="ts2-year-sel" data-name="2011">
-                                                <div>2011</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2012" name="ts2-year-sel" data-name="2012">
-                                                <div>2012</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2013" name="ts2-year-sel" data-name="2013">
-                                                <div>2013</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2014" name="ts2-year-sel" data-name="2014">
-                                                <div>2014</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2015" name="ts2-year-sel" data-name="2015">
-                                                <div>2015</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2016" name="ts2-year-sel" data-name="2016">
-                                                <div>2016</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2017" name="ts2-year-sel" data-name="2017">
-                                                <div>2017</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2018" name="ts2-year-sel" data-name="2018">
-                                                <div>2018</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2019" name="ts2-year-sel" data-name="2019">
-                                                <div>2019</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2020" name="ts2-year-sel" data-name="2020">
-                                                <div>2020</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2021" name="ts2-year-sel" data-name="2021">
-                                                <div>2021</div>
-                                            </label>
-                                            <label>
-                                                <input type="radio" value="2022" name="ts2-year-sel" data-name="2022"
-                                                    checked>
-                                                <div>2022</div>
-                                            </label>
-
-                                        </div>
-                                    </div>
+                                <div class="flex-row" id="yearRangeSliderRow">
+                                    <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022" data-step="1"
+                                    data-from="1996" data-type="range" data-atlas="year-range-slider">
                                 </div>
                             </div>
                         </div>
@@ -1015,25 +593,6 @@
                     </div>
                     <div id="query-layers" class="parent-leg-ctn force-hidden">
                         <!-- Dynamicaly generated via JS -->
-                        <!-- <div class="leg-ind-ctn actual sortable-item" name="etablissements">
-                            <div class="leg-ind-top">
-                                <div class="leg-ind-label">Établissements de santé</div>
-                                <div class="leg-ind-icons">
-                                </div>
-                            </div>
-                            <div class="leg-ind-bot gap-2rem">
-                                <div class="leg-ind-bot-group">
-                                    <img src="{{ url_for('static', filename='image/icons/icon-public.svg') }}" alt=""
-                                    class="thematic-svg">
-                                    <span class="leg-ind-bot-text">Établissements publiques</span>
-                                </div>
-                                <div class="leg-ind-bot-group">
-                                    <img src="{{ url_for('static', filename='image/icons/icon-private.svg') }}" alt=""
-                                    class="thematic-svg">
-                                    <span class="leg-ind-bot-text">Établissements privés</span>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
                 <!-- ALERT -->
@@ -1049,15 +608,14 @@
             </div>
         </div>
     </div>
+{% endblock %}
 
+{% block js %}
     <script src="{{ url_for('static', filename='js/gradients.js') }}"></script>
     <script src="{{ url_for('static', filename='js/mapinit.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tendency_checkbox.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tendency.js') }}"></script>
     <script src="{{ url_for('static', filename='js/cohort.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/singleselect.js') }}"></script>
     <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
-
-</html>
+{% endblock %}

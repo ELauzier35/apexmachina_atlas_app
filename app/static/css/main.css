@@ -230,9 +230,9 @@ body {
     position: absolute;
     bottom: 0px;
     border-radius: 3px;
-    left: -14px;
+    left: -30px;
     height: 50px;
-    width: 3px;
+    width: 4px;
     background-color: var(--primary);
     transition: width 0.3s;
 }
@@ -410,10 +410,9 @@ body {
     flex-direction: column;
     gap:12px;
 }
-/* .leg-ind-ctn:hover{
-    -webkit-box-shadow: rgba(13, 33, 56, 0.2) 0px 8px 24px !important;
-    box-shadow: rgba(13, 33, 56, 0.2) 0px 8px 24px !important;
-} */
+.leg-ind-ctn.ts-running{
+    pointer-events: none;
+}
 .leg-ind-top{
     display:flex;
     justify-content: space-between;
@@ -424,6 +423,10 @@ body {
     cursor: -webkit-grab !important;
     cursor: grab !important;
     font-size:1rem;
+}
+.leg-ind-ltitle{
+    position:relative;
+    bottom:4px;
 }
 .leg-ind-icons{
     display:flex;
@@ -493,6 +496,12 @@ body {
     padding: 2px 8px!important;
     -webkit-transform: translateY(-6px)!important;
     transform: translateY(-6px)!important;
+}
+#yearSelSliderRow .irs--material .irs-single{
+    font-size: .75rem!important;
+    padding: 6px 8px!important;
+    -webkit-transform: translateY(-16px)!important;
+    transform: translateY(-16px)!important;
 }
 
 .irs--material .irs-handle:hover {
@@ -1528,6 +1537,12 @@ div.ol-zoom {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+#yearRangeSliderRow, #yearSelSliderRow{
+    position:relative;
+    top:6px;
+    height: 36px;
 }
 
 .flex-title{

@@ -1,5 +1,6 @@
 // Global Variables
 var current_indicator_step = 'year';
+var currentStep = 0;
 window.current_basemap;
 const RLS_PATH = '../static/data/atlas/RLS_rmv_nd_join.geojson';
 const CATEGORY_DICT = {
@@ -67,6 +68,14 @@ window.closeAllMapBoxes = function(){
     $('.map-box').addClass('novis');
     $('.result-map-box').addClass('novis');
     $('.nav-link').removeClass('active');
+}
+function getQueryLayerById(layerId) {
+    for (const layer of queryLayerGroup.getLayers().getArray()) {
+        if (layer.get('title') === layerId) {
+            return layer;
+        }
+    }
+    return null;
 }
 
 const BASEMAP_NEXT = {
@@ -344,8 +353,15 @@ function initIonRange($input, opts = {}) {
             let type = input.data("atlas");
             if (type == 'opacity'){
                 changeLayerOpacity(name, data.from);
-            } else if (type='year-range'){
+            } else if (type == 'year-range'){
                 changeLayerYearViz(name, data.from);
+            } else if (type == 'year-sel-slider'){
+                selected_year = data.from;
+                console.log("Selected year:", selected_year);
+            } else if (type == 'year-range-slider'){
+                selected_year_ts1 = data.from;
+                selected_year_ts2 = data.to;
+                console.log("Start:", selected_year_ts1, "End:", selected_year_ts2);
             }
         }
      });
@@ -773,7 +789,6 @@ function totalLayerCreation(final_output) {
         steps = [min_val, min_val + (1 * step), min_val + (2 * step), min_val + (3 * step), min_val + (4 * step), min_val + (5 * step), min_val + (6 * step),
             min_val + (7 * step), min_val + (8 * step), min_val + (9 * step), max_val];
         master_dict[key] = [value, steps, ind_name, ind_lowgood];
-        console.log(master_dict);
         createAndAddLayer(key, ind_lowgood, master_dict);
         layers_on_map.push(String(key));
         addLegendItem(key, ind_name, ind_year, ind_unit, steps, ind_lowgood);
@@ -784,6 +799,7 @@ function createAndAddLayer(key, ind_lowgood, master_dict) {
     const [minVal, maxVal] = master_dict[key] || [undefined, undefined];
     const reverseBreaks = key.includes('-');
     const colors = ind_lowgood ? BLUES_COLORS : BLUES_COLORS_REV;
+    console.log(colors);
 
     const style_fct = (feature, resolution) =>
         getStyleRedYelBlue(feature, resolution, minVal, maxVal, colors, 0, reverseBreaks);
@@ -860,14 +876,14 @@ function addLegendItem(key, ind_name, ind_year, ind_unit, steps, ind_lowgood) {
         if (!isRange) return '';
         return `
         <div class="leg-ind-range-row">
-            <span>Année de visualisation</span>
+            <span class="leg-ind-ltitle">Année de visualisation</span>
             <input type="text" class="js-irs year-range" value="${startYear}" data-min="${startYear}" data-max="${endYear}" data-step="1"
-                data-from="${startYear}" name="${key}" data-atlas="year-range">
+                data-from="${startYear}" name="${key}-range" data-atlas="year-range">
        </div>`;
     };
 
     // ---------- color / gradient selection + registry ----------
-    const gradClass = ind_lowgood ? 'by-gradient' : 'yb-gradient';
+    const gradClass = ind_lowgood ? 'yb-gradient' : 'by-gradient';
     const colors = ind_lowgood ? BLUES_COLORS : BLUES_COLORS_REV;
     indicator_id_to_info_dict[key] = [colors, gradClass, ind_unit];
     let idx = 0;
@@ -946,7 +962,7 @@ function addLegendItem(key, ind_name, ind_year, ind_unit, steps, ind_lowgood) {
       </div>
 
       <div class="leg-ind-opacity-row">
-            <span>Contrôle de l'opacité</span>
+            <span class="leg-ind-ltitle">Contrôle de l'opacité</span>
             <input type="text" class="js-irs" value="100" data-min="0" data-max="100" data-step="5"
                 data-from="100" name="${key}" data-atlas="opacity">
        </div>
@@ -962,56 +978,16 @@ function addLegendItem(key, ind_name, ind_year, ind_unit, steps, ind_lowgood) {
     // ---------- DOM insertion ----------
     $('#query-layers').prepend(legendHTML);
 
-    // ---------- listeners ----------
-    // Time-step change: delegate on #query-layers to avoid duplicate global bindings
-    const timeSelSelector = `input[name="${key}-timesel"]`;
-    $('#query-layers').off('change', timeSelSelector).on('change', timeSelSelector, function () {
-        const thisLayerId = this.id.slice(0, -5); // remove "-YYYY"
-        const thisVal = Number(this.value);
-
-        queryLayerGroup.getLayers().forEach(function (layerElement) {
-            const actualLayerTitle = layerElement.get('title');
-            if (actualLayerTitle === thisLayerId) {
-                const source = layerElement.getSource();
-                source.forEachFeature((feature) => {
-                    if (ind_lowgood) {
-                        getStyleRedYelBlue(
-                            feature,
-                            null,
-                            master_dict[actualLayerTitle][0],
-                            master_dict[actualLayerTitle][1],
-                            blues_colors,
-                            thisVal,
-                            true
-                        );
-                    } else {
-                        getStyleRedYelBlue(
-                            feature,
-                            null,
-                            master_dict[actualLayerTitle][0],
-                            master_dict[actualLayerTitle][1],
-                            blues_colors_rev,
-                            thisVal,
-                            true
-                        );
-                    }
-                });
-            }
-        });
-    });
-
     // Timelapse: delegate + single binding per key
     const timeBtnSelector = `.leg-ind-icons[name="${key}"] .timelapse-btn`;
     $('#query-layers').off('click', timeBtnSelector).on('click', timeBtnSelector, function () {
         const layer_key = this.closest('.leg-ind-ctn').getAttribute('name');
-        const this_date_part = layer_key.split('.').slice(-1);
-        const step_list = generateDateStringList(this_date_part[0].split('-'));
-        const go_or_message = checkLayersOrderAndVisibility(layer_key);
-        if (go_or_message !== 'Go') {
-            addAlert('info', go_or_message, false);
-            return;
+        let is_first = checkIfLayerFirst(layer_key);
+        if (is_first){
+            displayStepsWithDelay(Object.values(indicator_id_range_ref[layer_key]), layer_key)
+        } else{
+            addAlert('info', "Veuillez déplacer cette couche en 1re position pour pouvoir partir le timelapse");
         }
-        start_timelapse_new(step_list, layer_key);
     });
 
     initIonRange($('.js-irs'));
@@ -1082,17 +1058,9 @@ function removeLayer(key, layer_type){
     if (layer_type == 'query'){
         try {map.removeLayer(queryFocusLayer)}
         catch (err) {console.log(err)}
-        queryLayerGroup.getLayers().forEach(function (element) {
-            try{
-                let actualLayerTitle = element.get('title');
-                if (actualLayerTitle.includes(key)) {
-                    queryLayerGroup.getLayers().remove(element);
-                    layers_on_map = layers_on_map.filter(item => item !== actualLayerTitle);
-                }
-            } catch(err){
-                console.log(err);
-            }
-        })
+        thisLayer = getQueryLayerById(key);
+        queryLayerGroup.getLayers().remove(thisLayer);
+        layers_on_map = layers_on_map.filter(item => item !== key);
     } else if (layer_type == 'thematic'){
         thematicLayerDict[key]['mainLayer'].setVisible(false);
         thematicLayerDict[key]['clusterLayer'].setVisible(false);
@@ -1109,30 +1077,25 @@ function removeLayer(key, layer_type){
     }
 }
 function changeLayerOpacity(name, opacity){
-    queryLayerGroup.getLayers().forEach(function (element) {
-        let actualLayerTitle = element.get('title');
-        if (actualLayerTitle == name) {
-            element.setOpacity(opacity/100);
-        }
-    })
+    let thisLayer = getQueryLayerById(name);
+    thisLayer.setOpacity(opacity/100);
 }
 function changeLayerYearViz(name, new_year){
-    queryLayerGroup.getLayers().forEach(function (element) {
-        let actualLayerTitle = element.get('title');
-        if (actualLayerTitle == name) {
-            let source = element.getSource();
-            source.forEachFeature((feature) => {
-                const colors = master_dict[actualLayerTitle][3] ? BLUES_COLORS : BLUES_COLORS_REV;
-                getStyleRedYelBlue(
-                    feature, 
-                    null, 
-                    master_dict[actualLayerTitle][0],
-                    master_dict[actualLayerTitle][1], 
-                    colors, 
-                    indicator_id_range_ref[name][new_year], 
-                    true);
-            })
-        }
+    if (name.includes("-range")) {
+        name = name.replace("-range", "");
+    }
+    let thisLayer = getQueryLayerById(name);
+    let source = thisLayer.getSource();
+    source.forEachFeature((feature) => {
+        const colors = master_dict[name][3] ? BLUES_COLORS : BLUES_COLORS_REV;
+        getStyleRedYelBlue(
+            feature, 
+            null, 
+            master_dict[name][0],
+            master_dict[name][1], 
+            colors, 
+            indicator_id_range_ref[name][new_year], 
+            true);
     })
 }
 function makeFirstInLayerGroup(name){
@@ -1149,7 +1112,58 @@ function makeFirstInLayerGroup(name){
     layers.removeAt(idx);
     layers.insertAt(layers.getLength(), layer);
 }
-
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function displayStepsWithDelay(stepList, layerName) {
+    addAlert('loading', 'Timelapse en cours');
+    $(".leg-ind-ctn[name='" + layerName + "']").addClass('ts-running');
+    loop_step = 0;
+    thisLayer = getQueryLayerById(layerName);
+    source = thisLayer.getSource();
+    for (const step of stepList) {
+        source.forEachFeature((feature) => {
+            const colors = master_dict[layerName][3] ? BLUES_COLORS : BLUES_COLORS_REV;
+            getStyleRedYelBlue(
+                feature, 
+                null, 
+                master_dict[layerName][0],
+                master_dict[layerName][1], 
+                colors, 
+                loop_step, 
+                true);
+        })
+        let $input = $("input[name='" + layerName + "-range']");
+        let slider = $input.data("ionRangeSlider");
+        slider.update({
+            from: Object.keys(indicator_id_range_ref[layerName])[loop_step]
+        });
+        await wait(1000);
+        loop_step += 1;
+    }
+    // Timelapse is finished, going back to first value
+    source.forEachFeature((feature) => {
+        const colors = master_dict[layerName][3] ? BLUES_COLORS : BLUES_COLORS_REV;
+        getStyleRedYelBlue(
+            feature, 
+            null, 
+            master_dict[layerName][0],
+            master_dict[layerName][1], 
+            colors, 
+            0, 
+            true);
+    })
+    $("input[name='" + layerName + "-range']").data("ionRangeSlider").update({
+        from: Object.keys(indicator_id_range_ref[layerName])[0]
+    });
+    $(".leg-ind-ctn[name='" + layerName + "']").removeClass('ts-running');
+    addAlert('success', 'Timelapse terminé');
+}
+function checkIfLayerFirst(layer_key) {
+    const firstChild = $("#query-layers").children().first();
+    const firstName = firstChild.attr("name");
+    return firstName === layer_key ? true : false;
+}
 
 // ====== Handle subtree changes in legend =========
 function handleSubtreeChanges() {
@@ -1229,7 +1243,7 @@ $(document).ready(function () {
     createIndicatorList();
     createIndicatorListCohorte();
     resetChangeEvents();
-    InitSelect();
+    initIonRange($('.main-ion'));
 
     // Init tooltip
     new bootstrap.Tooltip(document.body, { selector: '[data-bs-toggle="tooltip"]', html: true });
@@ -1296,7 +1310,13 @@ map.on('singleclick', function (evt) {
 
             // Extract the layer title and feature value
             infoPanelIndicatorClicked = layer.get('title');
-            let feature_val = trailing_output[infoPanelIndicatorClicked][feature_code]['avg'];
+
+            if (infoPanelIndicatorClicked.includes('-')){
+                feature_val = trailing_output[infoPanelIndicatorClicked][feature_code][currentStep]['avg'];
+            } else{
+                feature_val = trailing_output[infoPanelIndicatorClicked][feature_code]['avg'];
+            }
+        
 
             // Remove queryFocusLayer if allready there
             try {map.removeLayer(queryFocusLayer)}
