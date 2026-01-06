@@ -1,7 +1,7 @@
 # FLASK IMPORTS
-from flask import Flask, redirect, session, render_template, render_template_string, flash, get_flashed_messages, send_from_directory, jsonify, abort, redirect, request, url_for, make_response
+from flask import redirect, session, render_template, jsonify, redirect, request, url_for
 from app import app
-from app.db import indicators_atlas, indicators_atlas_cohorte
+from app.db import indicators_atlas, indicators_atlas_cohorte, projects
 from app.scripts.query_generator_atlas import *
 from datetime import timedelta
 from app.linkedin_oauth import linkedin_bp
@@ -18,15 +18,37 @@ app.config['SESSION_COOKIE_SECURE'] = True  # If using HTTPS
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 
-@app.route("/<querystring>/", methods=['GET', 'POST'])
-@app.route("/", methods=['GET', 'POST'])
-def atlas(querystring='/inds=+&base=satLayer'):
-    atlas_indicators = list(indicators_atlas.find({}, {"_id": 0, "data" : 0}))
-    atlas_indicators_cohorte = list(indicators_atlas_cohorte.find({}, {"_id": 0, "data" : 0}))
-    return render_template('index.html', 
-                           title='ApexMachina — Atlas', 
-                           atlas_indicators=atlas_indicators,
-                           atlas_indicators_cohorte=atlas_indicators_cohorte)
+
+@app.route("/", methods=["GET", "POST"])
+@app.route("/<project_id>/", methods=["GET", "POST"])
+def atlas(project_id=None):
+    # Keep your "+" behavior (note: '+' in URL often becomes space)
+    inds = request.args.get("inds", " ").replace(" ", "+")
+    base = request.args.get("base", "satLayer")
+
+    project = None
+    if project_id is not None:
+        project = projects.find_one({"id": project_id}, {"_id": 0})
+
+        if project is None:
+            return redirect(url_for("atlas", inds=inds, base=base))
+        else:
+            inds = "+".join(project['indicators-on-map']) + "+"
+
+    atlas_indicators = list(indicators_atlas.find({}, {"_id": 0, "data": 0}))
+    atlas_indicators_cohorte = list(indicators_atlas_cohorte.find({}, {"_id": 0, "data": 0}))
+    all_projects = list(projects.find({}, {"_id": 0}))
+
+    return render_template(
+        "index.html",
+        title="ApexMachina — Atlas",
+        project=project,
+        init_inds=inds,
+        init_base=base,
+        atlas_indicators=atlas_indicators,
+        atlas_indicators_cohorte=atlas_indicators_cohorte,
+        all_projects=all_projects
+    )
 
 
 @app.route('/tendency_query', methods=['POST'])
@@ -34,7 +56,15 @@ def tendency_query():
     params = request.get_json()
     indicator = params[0]
     rls_codes = params[1]
-    output = query_tendencies(indicator, rls_codes)
+    level = params[2]
+    output = query_tendencies(indicator, rls_codes, level)
+    return jsonify(output)
+
+@app.route('/tendency_query_provincial', methods=['POST'])
+def tendency_query_provincial():
+    params = request.get_json()
+    indicator = params[0]
+    output = query_provincial_tendency(indicator)
     return jsonify(output)
 
 @app.route('/cohort_query', methods=['POST'])

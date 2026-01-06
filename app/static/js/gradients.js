@@ -380,7 +380,7 @@ function selectMethod(method) {
     document.querySelectorAll('.classification-option').forEach(option => {
         option.classList.toggle('selected', option.dataset.method === method);
     });
-    this_data_dict = master_dict[modifyLayer][0];
+    this_data_dict = masterDict[modifyLayer][0];
     if (modifyLayer.includes('TS')) {
         only_vals = [];
         for (const my_key in this_data_dict) {

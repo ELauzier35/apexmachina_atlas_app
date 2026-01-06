@@ -1,5 +1,59 @@
-var cohort_activated = false;
+/**
+ * cohort.js
+ * -------------------------
+ * Everything about cohort mapbox
+ * 
+ *
+**/
+import { addAlert } from "../utils.js";
+import { 
+    COH_CODE_TO_NAME_DICT,
+    DIM_OPACITY,
+    BASE_OPACITY,
+    THICK_WIDTH
+} from "../global.js";
+import { cohortChart } from "./charts.js";
+import { 
+    signClass, 
+    formatPercent, 
+    formatNumberTendency 
+} from "./tendency.js";
+
+
 var current_cohort_indicator = null;
+
+
+export function createIndicatorListCohorte() {
+    atlas_indicators_cohorte.forEach(function (indicator) {
+        indicatorIdToNameCohortDict[indicator['id']] = indicator['title'];
+        let lsp_ind_el = `<div class="lsp-bubble-box">
+                            <input type="radio" id="C`+ indicator['id'] + `" name="lsp-indicators-coh" value="` + indicator['id'] + `" />
+                            <label for="C`+ indicator['id'] + `" class="lsp-indicators-label">
+                                <div class="check-disp">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                `+ indicator['title'] + `
+                            </label>
+                        </div>`
+        $('#lspIndicatorListCohorte').append(lsp_ind_el);
+    })
+}
+export function createCohList() {
+    for (const [key, value] of Object.entries(COH_CODE_TO_NAME_DICT)) {
+        COH_CODE_TO_NAME_DICT[key] = value;
+        let lsp_coh_el = `<div class="lsp-bubble-box">
+                            <input type="checkbox" id="C`+ key + `" name="lsp-coh" value="` + key + `" />
+                            <label for="C`+ key + `" class="lsp-indicators-label">
+                                <div class="check-disp">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                `+ value + `
+                            </label>
+                        </div>`
+        $('#lspCohorteList').append(lsp_coh_el);
+    }
+}
+
 
 function retrieveCohortInputs() {
     const cohort_indicator = $('input[name="lsp-indicators-coh"]:checked').val();
@@ -60,7 +114,7 @@ function computeCohortStats(seriesByCode, startYear = 1996, window = 5) {
     return out;
 }
 function displayCohortStats(tendencyStats, {
-    cohNameMap = coh_code_to_name_dict,
+    cohNameMap = COH_CODE_TO_NAME_DICT,
     currency = null,
     showPercentSign = false,
     } = {}) {
@@ -134,7 +188,7 @@ function updateCohortChart(seriesByCode) {
     cohortChart.series.slice().forEach(s => s.remove());
     for (const [code, arr] of Object.entries(seriesByCode)) {
         cohortChart.addSeries({
-            name: coh_code_to_name_dict[code],
+            name: COH_CODE_TO_NAME_DICT[code],
             data: arr,
             id: String(code)
         });
@@ -161,17 +215,17 @@ $('#view-cohort').click(function () {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 // 1) Compute statistics for each RLS
-                cohortStats = computeCohortStats(data);
+                let cohortStats = computeCohortStats(data);
                 // 2) Display statistics in result-map-box
+                let this_currency
                 if (indicatorsKeyRef[current_cohort_indicator]['unit'] == '$ CAN moyen') {
                     this_currency = "CAD";
                 } else {
                     this_currency = null;
                 }
                 const html = displayCohortStats(cohortStats, {
-                    cohNameMap: coh_code_to_name_dict,
+                    cohNameMap: COH_CODE_TO_NAME_DICT,
                     currency: this_currency,         
                     showPercentSign: false,
                     includeRank: false
@@ -214,7 +268,7 @@ $('#view-cohort').click(function () {
                 // 3) Update tendency chart
                 updateCohortChart(data);
                 // 4) Display the result-map-box
-                $('#cohortIndicatorName').html(indicator_id_to_name_dict[result[0]].toLowerCase());
+                $('#cohortIndicatorName').html(indicatorIdToNameDict[result[0]].toLowerCase());
                 $('.result-map-box[data-nav="cohort"]').removeClass('novis');
                 $('.map-box[data-nav="cohort"]').removeClass('enlarge');
                 $('.map-box[data-nav="cohort"]').addClass('novis');
@@ -223,7 +277,7 @@ $('#view-cohort').click(function () {
             })
             .catch(error => {
                 console.log(error);
-                addAlert('error', 'Erreur lors du calcul des tendances');
+                addAlert('error', 'Erreur lors du calcul des tendances par cohorte');
             });
     }
 

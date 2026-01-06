@@ -3,619 +3,848 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block head %}
-    {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gradients.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/singleselect.css') }}">
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gradients.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/singleselect.css') }}">
 
-    <script>
-        atlas_indicators = {{ atlas_indicators | tojson }}
-        const indicatorsKeyRef = Object.fromEntries(
-            atlas_indicators.map(indicator => [indicator.id, indicator])
-        );
-        atlas_indicators_cohorte = {{ atlas_indicators_cohorte | tojson }}
-        // console.log(atlas_indicators);
-        var selected_year = 2022;
-        var selected_year_ts1 = 1996;
-        var selected_year_ts2 = 2022;
-    </script>
+<script>
+    atlas_indicators = {{ atlas_indicators | tojson }}
+    const indicatorsKeyRef = Object.fromEntries(
+        atlas_indicators.map(indicator => [indicator.id, indicator])
+    );
+    atlas_indicators_cohorte = {{ atlas_indicators_cohorte | tojson }}
+    all_projects = {{ all_projects | tojson }}
+    // console.log(atlas_indicators);
+    init_inds = {{ init_inds | tojson }}
+    init_base = {{ init_base | tojson }}
+    project = {{ project | tojson }}
+    let selectedYear = 2022;
+    let selectedYearTS1 = 1996;
+    let selectedYearTS2 = 2022;
+</script>
 {% endblock %}
 
 {% block content %}
-    <div id="loading-overlay">
-        <div class="loading-content">
-            <img src="{{ url_for('static', filename='image/logo/apex-machina-renv-fav.svg') }}" alt=""
-                        width="200">
-            <span class="type-me">Atlas Santé Québec</span>
+<div id="loading-overlay">
+    <div class="loading-content">
+        <img src="{{ url_for('static', filename='image/logo/apex-machina-renv-fav.svg') }}" alt="" width="200">
+        <span class="type-me">GeoSanté</span>
+    </div>
+</div>
+<!-- GUIDED TOUR -->
+<div class="tour-overlay" id="tourOverlay"></div>
+<div class="tour-modal start" id="tourModal">
+    <div class="tour-close-btn" id="tourCloseBtn">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="tour-modal-icon">
+        <i class="fa-solid fa-compass"></i>
+    </div>
+    <div class="tour-modal-header">
+        <div class="tour-modal-title" id="tourTitle">Bienvenue sur GeoSanté</div>
+    </div>
+    <div class="tour-modal-content" id="tourContent">
+        Cette courte visite guidée vous aidera à prendre en main GeoSanté. 
+        Découvrez les outils mis à votre disposition pour explorer, comprendre et analyser les données de santé du Québec.
+    </div>
+    <div class="tour-modal-footer">
+        <div class="tour-steps-dots">
+            <div class="tour-dot active"></div>
+            <div class="tour-dot"></div>
+            <div class="tour-dot"></div>
+            <div class="tour-dot"></div>
+            <div class="tour-dot"></div>
+            <div class="tour-dot"></div>
+            <div class="tour-dot"></div>
+            <div class="tour-dot"></div>
+            <div class="tour-dot"></div>
+        </div>
+        <div class="tour-btn-row">
+            <button class="tour-btn-previous hidden" id="tourPreviousBtn">
+                <span>Précédent</span>
+            </button>
+            <button class="tour-btn-next" id="tourNextBtn">
+                <span>Démarrer</span>
+            </button>
         </div>
     </div>
-    <div class="main">
-        <div class="nav-col">
-            <div class="nav-top">
-                <div class="nav-logo">
-                    <img src="{{ url_for('static', filename='image/logo/apex-machina-renv-fav.svg') }}" alt=""
-                        width="100%">
-                </div>
-                <div class="nav-links">
-                    <div class="nav-link" data-nav="indicator" data-bs-toggle="tooltip" data-bs-placement="right"
-                        title="Indicateurs cartographiques">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-map-plus-icon lucide-map-plus">
-                            <path
-                                d="m11 19-1.106-.552a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0l4.212 2.106a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619V12" />
-                            <path d="M15 5.764V12" />
-                            <path d="M18 15v6" />
-                            <path d="M21 18h-6" />
-                            <path d="M9 3.236v15" />
-                        </svg>
-                    </div>
-                    <div class="nav-link" data-nav="tendency" data-bs-toggle="tooltip" data-bs-placement="right"
-                        title="Tendances">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-chart-line-icon lucide-chart-line">
-                            <path d="M3 3v16a2 2 0 0 0 2 2h16" />
-                            <path d="m19 9-5 5-4-4-3 3" />
-                        </svg>
-                    </div>
-                    <div class="nav-link" data-nav="cohort" data-bs-toggle="tooltip" data-bs-placement="right"
-                        title="Cohortes">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-users-round-icon lucide-users-round">
-                            <path d="M18 21a8 8 0 0 0-16 0" />
-                            <circle cx="10" cy="8" r="5" />
-                            <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
-                        </svg>
-                    </div>
-                    <div class="nav-link" data-nav="layer" data-bs-toggle="tooltip" data-bs-placement="right"
-                        title="Couches thématiques">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-layers-icon lucide-layers">
-                            <path
-                                d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
-                            <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
-                            <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
-                        </svg>
-                    </div>
-                </div>
+</div>
+<div class="main">
+    <div class="nav-col">
+        <div class="nav-top">
+            <div class="nav-logo">
+                <img src="{{ url_for('static', filename='image/logo/apex-machina-renv-fav.svg') }}" alt="" width="100%">
             </div>
-            <div class="nav-bot">
-                <div class="nav-user">
+            <div class="nav-links">
+                <div class="nav-link" data-nav="indicator" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Indicateurs cartographiques">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-map-plus-icon lucide-map-plus">
+                        <path
+                            d="m11 19-1.106-.552a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0l4.212 2.106a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619V12" />
+                        <path d="M15 5.764V12" />
+                        <path d="M18 15v6" />
+                        <path d="M21 18h-6" />
+                        <path d="M9 3.236v15" />
+                    </svg>
+                </div>
+                <div class="nav-link" data-nav="tendency" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Tendances">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chart-line-icon lucide-chart-line">
+                        <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+                        <path d="m19 9-5 5-4-4-3 3" />
+                    </svg>
+                </div>
+                <div class="nav-link" data-nav="dispersion" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Dispersion">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chart-scatter-icon lucide-chart-scatter">
+                        <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
+                        <circle cx="18.5" cy="5.5" r=".5" fill="currentColor" />
+                        <circle cx="11.5" cy="11.5" r=".5" fill="currentColor" />
+                        <circle cx="7.5" cy="16.5" r=".5" fill="currentColor" />
+                        <circle cx="17.5" cy="14.5" r=".5" fill="currentColor" />
+                        <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+                    </svg>
+                </div>
+                <!-- <div class="nav-link" data-nav="cohort" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Cohortes">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-users-round-icon lucide-users-round">
+                        <path d="M18 21a8 8 0 0 0-16 0" />
+                        <circle cx="10" cy="8" r="5" />
+                        <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
+                    </svg>
+                </div> -->
+                <div class="nav-link" data-nav="layer" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Couches thématiques">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-layers-icon lucide-layers">
+                        <path
+                            d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+                        <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+                        <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+                    </svg>
+                </div>
+                <div class="nav-link" data-nav="project" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Projets">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-folder-open-icon lucide-folder-open">
+                        <path
+                            d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
+                    </svg>
                 </div>
             </div>
         </div>
-        <div class="main-col">
-            <div id="map">
-                <div id="switcher" class="basemap-switcher controls-hover" data-bs-toggle="tooltip"
-                    data-bs-placement="left" title="Fonds de carte">
-                    <div id="basemap-preview"></div>
-                </div>
-                <!-- INDICATOR MAPBOX-->
-                <div class="map-box no-pad novis" data-nav="indicator">
-                    <div class="enlarge-mb" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                        data-bs-original-title="Grossir">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-maximize-icon lucide-maximize">
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-                            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-                            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-                            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-minimize-icon lucide-minimize">
-                            <path d="M8 3v3a2 2 0 0 1-2 2H3" />
-                            <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-                            <path d="M3 16h3a2 2 0 0 1 2 2v3" />
-                            <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-                        </svg>
-                    </div>
-                    <div class="top-pad">
-                        <div class="mb-title-section">
-                            <div class="mb-title">Visualisation cartographique</div>
-                            <div class="mb-subtitle">Choisissez les indicateurs à cartographier</div>
-                        </div>
-                        <div class="tab-row">
-                            <div class="tab-el fifty active" data-tab="year" data-tabgroup="indicator-timeframe">Année
-                                unique</div>
-                            <div class="tab-el fifty" data-tab="serie" data-tabgroup="indicator-timeframe">Série
-                                temporelle
-                            </div>
-                        </div>
-                        <!-- Scale selection -->
-                        <!-- <div class="rls-stats-section">
-                            <div class="mb-sub-title">
-                                <span>Veuillez choisir une échelle de visualisation</span>
-                            </div>
-                            <div class="scale-sel-row">
-                                <div class="lsp-bubble-box">
-                                    <input type="radio" id="CLSC" name="scale-sel" value="CLSC" checked>
-                                    <label for="CLSC" class="lsp-indicators-label bigger">
-                                        <div class="check-disp">
-                                            <i class="fa-solid fa-check"></i>
-                                        </div>
-                                       CLSC
-                                    </label>
-                                </div>
-                                <div class="lsp-bubble-box">
-                                    <input type="radio" id="RLS" name="scale-sel" value="RLS">
-                                    <label for="RLS" class="lsp-indicators-label bigger">
-                                        <div class="check-disp">
-                                            <i class="fa-solid fa-check"></i>
-                                        </div>
-                                       RLS
-                                    </label>
-                                </div>
-                                <div class="lsp-bubble-box">
-                                    <input type="radio" id="RTS" name="scale-sel" value="RTS">
-                                    <label for="RTS" class="lsp-indicators-label bigger">
-                                        <div class="check-disp">
-                                            <i class="fa-solid fa-check"></i>
-                                        </div>
-                                       RTS
-                                    </label>
-                                </div>
-                            </div>
-                        </div> -->
-                        <!-- Single year selection -->
-                        <div class="rls-stats-section year-dropdown visible" data-tab="year">
-                            <div class="mb-sub-title">
-                                <span>Veuillez choisir une année</span>
-                            </div>
-                            <div class="dropdown-row">
-                                <div class="flex-row" id="yearSelSliderRow">
-                                    <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022" data-step="1"
-                                    data-from="2022" data-atlas="year-sel-slider">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Time series selection -->
-                        <div class="rls-stats-section year-dropdown" data-tab="serie">
-                            <div class="mb-sub-title">
-                                <span>Veuillez choisir la période</span>
-                            </div>
-                            <div class="dropdown-row">
-                                <div class="flex-row" id="yearRangeSliderRow">
-                                    <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022" data-step="1"
-                                    data-from="1996" data-type="range" data-atlas="year-range-slider">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rls-stats-section">
-                        <div class="mb-sub-title special-pad">
-                            <div class="flex-title">
-                                <span>Veuillez choisir des indicateurs</span>
-                                <span id="nameSearch" class="search-icon" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="" data-bs-original-title="Recherche par nom">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </span>
-                            </div>
-                            <span id="filter-indicators" class="open-box" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="" data-bs-original-title="Filtrer les indicateurs">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel">
-                                    <path
-                                        d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" />
-                                </svg>
+    </div>
+    <div class="main-col">
+        <div id="map">
+            <div id="switcher" class="basemap-switcher controls-hover" data-bs-toggle="tooltip" data-bs-placement="left"
+                title="Fonds de carte">
+                <div id="basemap-preview"></div>
+            </div>
+            <!-- PROJECT SIDE-PANEL -->
+            <div class="project-sp">
+                <div class="prj-sp-toprow">
+                    <div class="prj-badge" id="prj-short-title">
 
-                                <!-- FILTER INDICATORS BOX-->
-                                <div id="filter-indicators-box" class="novis">
-                                    <div class="filter-section">
-                                        <div class="mb-sub-title">
-                                            <span>Filtrer par type</span>
+                    </div>
+                    <div class="prj-title">
+                        <div class="prj-pretitle">Vous visualisez présentement le projet :</div>
+                        <span id="prj-long-title"></span>
+                    </div>
+                </div>
+                <div class="prj-col-section">
+                    <span class="prj-col-title">Description du projet :</span>
+                    <span class="prj-col-val" id="prj-long-description">Ce projet présente les résultats du papier. Duis
+                        aute irure dolor in
+                        reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                        laborum.
+                        Cette approche a permis de soulever les disparités territoriales
+                        importantes blab bla bla.
+                    </span>
+                </div>
+                <div class="prj-col-section">
+                    <span class="prj-col-title">Issue de la publication :</span>
+                    <span class="prj-col-val" id="prj-citation">
+                    </span>
+                </div>
+                <div class="mb-btn-row">
+                    <button class="main-btn full-w">
+                        <span>Faire la visite guidée de ce projet</span>
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_EAF4FF.svg') }}" alt=""
+                            class="btn-iconography icon-regular">
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_FE725C.svg') }}" alt=""
+                            class="btn-iconography icon-solid">
+                    </button>
+                </div>
+            </div>
+            <div class="project-sp-btn">
+                <i class="fa-solid fa-angle-left"></i>
+            </div>
+            <!-- INDICATOR MAPBOX-->
+            <div class="map-box no-pad novis" data-nav="indicator">
+                <div class="enlarge-mb" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Grossir">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-maximize-icon lucide-maximize">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                        <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                        <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-minimize-icon lucide-minimize">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+                        <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                        <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+                        <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                    </svg>
+                </div>
+                <div class="top-pad">
+                    <div class="mb-title-section">
+                        <div class="mb-title">Visualisation cartographique</div>
+                        <div class="mb-subtitle">Choisissez les indicateurs à cartographier</div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-el map-ind fifty active" data-tab="year" data-tabgroup="indicator-timeframe">
+                            Année
+                            unique</div>
+                        <div class="tab-el map-ind fifty" data-tab="serie" data-tabgroup="indicator-timeframe">Série
+                            temporelle
+                        </div>
+                    </div>
+                    <!-- Single year selection -->
+                    <div class="rls-stats-section year-dropdown visible" data-tab="year">
+                        <div class="mb-sub-title">
+                            <span>Veuillez choisir une année</span>
+                        </div>
+                        <div class="dropdown-row">
+                            <div class="flex-row" id="yearSelSliderRow">
+                                <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022"
+                                    data-step="1" data-from="2022" data-atlas="year-sel-slider">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Time series selection -->
+                    <div class="rls-stats-section year-dropdown" data-tab="serie">
+                        <div class="mb-sub-title">
+                            <span>Veuillez choisir la période</span>
+                        </div>
+                        <div class="dropdown-row">
+                            <div class="flex-row" id="yearRangeSliderRow">
+                                <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022"
+                                    data-step="1" data-from="1996" data-type="range" data-atlas="year-range-slider">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rls-stats-section">
+                    <div class="mb-sub-title special-pad">
+                        <div class="flex-title">
+                            <span>Veuillez choisir des indicateurs</span>
+                            <span id="nameSearch" class="search-icon" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="" data-bs-original-title="Recherche par nom">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                        </div>
+                        <span id="filter-indicators" class="open-box" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="" data-bs-original-title="Filtrer les indicateurs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel">
+                                <path
+                                    d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" />
+                            </svg>
+
+                            <!-- FILTER INDICATORS BOX-->
+                            <div id="filter-indicators-box" class="novis">
+                                <div class="filter-section">
+                                    <div class="mb-sub-title">
+                                        <span>Filtrer par type</span>
+                                    </div>
+                                    <div class="filter-row">
+                                        <div class="filter-group">
+                                            <label for="performance-ind" class="type-label performance">
+                                                <input type="checkbox" id="performance-ind" name="filter-ind-type"
+                                                    value="performance" checked>
+                                                <span>Performance</span>
+                                            </label>
                                         </div>
-                                        <div class="filter-row">
-                                            <div class="filter-group">
-                                                <label for="performance-ind" class="type-label performance">
-                                                    <input type="checkbox" id="performance-ind" name="filter-ind-type"
-                                                        value="performance" checked>
-                                                    <span>Performance</span>
-                                                </label>
-                                            </div>
-                                            <div class="filter-group">
-                                                <label for="patientele-ind" class="type-label patientele">
-                                                    <input type="checkbox" id="patientele-ind" name="filter-ind-type"
-                                                        value="patientele" checked>
-                                                    <span>patientèle</span>
-                                                </label>
-                                            </div>
-                                            <div class="filter-group">
-                                                <label for="access-ind" class="type-label access">
-                                                    <input type="checkbox" id="access-ind" name="filter-ind-type"
-                                                        value="access" checked>
-                                                    <span>Accès aux services de santé</span>
-                                                </label>
-                                            </div>
-                                            <div class="filter-group">
-                                                <label for="socio-ind" class="type-label socio">
-                                                    <input type="checkbox" id="socio-ind" name="filter-ind-type"
-                                                        value="socio" checked>
-                                                    <span>Socio-économique</span>
-                                                </label>
-                                            </div>
-                                            <div class="filter-group">
-                                                <label for="geospatial-ind" class="type-label geospatial">
-                                                    <input type="checkbox" id="geospatial-ind" name="filter-ind-type"
-                                                        value="geospatial" checked>
-                                                    <span>Géospatiale</span>
-                                                </label>
-                                            </div>
+                                        <div class="filter-group">
+                                            <label for="patientele-ind" class="type-label patientele">
+                                                <input type="checkbox" id="patientele-ind" name="filter-ind-type"
+                                                    value="patientele" checked>
+                                                <span>patientèle</span>
+                                            </label>
+                                        </div>
+                                        <div class="filter-group">
+                                            <label for="access-ind" class="type-label access">
+                                                <input type="checkbox" id="access-ind" name="filter-ind-type"
+                                                    value="access" checked>
+                                                <span>Accès aux services de santé</span>
+                                            </label>
+                                        </div>
+                                        <div class="filter-group">
+                                            <label for="socio-ind" class="type-label socio">
+                                                <input type="checkbox" id="socio-ind" name="filter-ind-type"
+                                                    value="socio" checked>
+                                                <span>Socio-économique</span>
+                                            </label>
+                                        </div>
+                                        <div class="filter-group">
+                                            <label for="geospatial-ind" class="type-label geospatial">
+                                                <input type="checkbox" id="geospatial-ind" name="filter-ind-type"
+                                                    value="geospatial" checked>
+                                                <span>Géospatiale</span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
-                            </span>
-                        </div>
-                        <div id="nameSearchRow" class="special-pad">
-                            <div class="search-bar">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="nameSearchInput" placeholder="ex. Omnipraticiens">
                             </div>
-                        </div>
-                        <!-- MAIN INDICATOR LIST -->
-                        <div id="indicatorList" class="sp-indicators-box max-height">
-                            <!-- Dynamicaly generated via JS -->
+                        </span>
+                    </div>
+                    <div id="nameSearchRow" class="special-pad">
+                        <div class="search-bar">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="nameSearchInput" placeholder="ex. Omnipraticiens">
                         </div>
                     </div>
-                </div>
-                <!-- TENDENCY MAPBOX-->
-                <div class="map-box no-pad novis" data-nav="tendency">
-                    <div class="enlarge-mb" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                        data-bs-original-title="Grossir">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-maximize-icon lucide-maximize">
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-                            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-                            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-                            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-minimize-icon lucide-minimize">
-                            <path d="M8 3v3a2 2 0 0 1-2 2H3" />
-                            <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-                            <path d="M3 16h3a2 2 0 0 1 2 2v3" />
-                            <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-                        </svg>
-                    </div>
-                    <div class="top-pad">
-                        <div class="mb-title-section">
-                            <div class="mb-title">Tendances</div>
-                            <div class="mb-subtitle">Visualisez l'évolution des indicateurs par RLS</div>
-                        </div>
-                        <div class="message-ctn-exp">
-                            <div class="message-box-exp">
-                                <div class="message-info-exp">
-                                    L'onglet <b>Tendances</b> propose une visualisation graphique de l'évolution des
-                                    indicateurs par RLS. Il permet de repérer les variations dans le temps, les écarts
-                                    régionaux et les changements structurels.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tendency-section">
-                        <div class="mb-sub-title withpad">
-                            <div class="mb-sub-title-l">
-                                <span>Veuillez choisir une indicateur de santé</span>
-                            </div>
-                            <div class="mb-count-badge">
-                                <span id="indicatorCount">0 sélectionné</span>
-                            </div>
-                        </div>
-                        <!-- Indicator list -->
-                        <div id="lspIndicatorList" class="lsp-bubble-selection">
-                            <!-- Dynamicaly generated via JS -->
-                        </div>
-                    </div>
-                    <div class="tendency-section">
-                        <div class="mb-sub-title withpad">
-                            <div class="mb-sub-title-l">
-                                <span>Veuillez choisir une ou plusieurs RLS</span>
-                            </div>
-                            <div class="mb-count-badge">
-                                <span id="rlsCount">0 sélectionné</span>
-                            </div>
-                        </div>
-                        <!-- RLS list -->
-                        <div id="lspRLSList" class="lsp-bubble-selection">
-                            <!-- Dynamicaly generated via JS -->
-                        </div>
-                    </div>
-                    <div class="mb-btn-row special-pad-btn">
-                        <button class="main-btn full-w" id="view-tendency">
-                            <span>Visualiser les tendances par RLS</span>
-                            <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_EAF4FF.svg') }}"
-                                alt="" class="btn-iconography icon-regular">
-                            <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_FE725C.svg') }}"
-                                alt="" class="btn-iconography icon-solid">
-                        </button>
-                    </div>
-                </div>
-                <!-- TENDENCY RESULT MAPBOX -->
-                <div class="result-map-box novis" data-nav="tendency">
-                    <div class="close-mb" data-close="result-map-box" data-nav="tendency">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
-                    <div class="mb-title-section">
-                        <div class="mb-title">Résultats tendances</div>
-                        <div class="mb-subtitle">Tendances <span style="color:var(--primary)"
-                                id="tendencyIndicatorName">coût
-                                d'hospitalisation</span> par RLS</div>
-                    </div>
-                    <div class="vert-container">
-                        <div class="rls-stats-grid">
-                            <!-- Dynamicaly generated via JS -->
-                        </div>
-                        <div class="rls-stats-section mb-graph-container">
-                            <div class="mb-sub-title just-flex-start">
-                                <i class="fa-solid fa-chart-line" style="color:var(--primary)"></i>
-                                <span>Évolution temporelle</span>
-                            </div>
-                            <div class="mb-graph-box">
-                                <div id="container-tendency"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- COHORT MAPBOX-->
-                <div class="map-box no-pad novis" data-nav="cohort">
-                    <div class="enlarge-mb" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                        data-bs-original-title="Grossir">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-maximize-icon lucide-maximize">
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-                            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-                            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-                            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-minimize-icon lucide-minimize">
-                            <path d="M8 3v3a2 2 0 0 1-2 2H3" />
-                            <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-                            <path d="M3 16h3a2 2 0 0 1 2 2v3" />
-                            <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-                        </svg>
-                    </div>
-                    <div class="top-pad">
-                        <div class="mb-title-section">
-                            <div class="mb-title">Cohortes</div>
-                            <div class="mb-subtitle">Visualisez l'évolution des indicateurs par groupes définis</div>
-                        </div>
-                        <div class="message-ctn-exp">
-                            <div class="message-box-exp">
-                                <div class="message-info-exp">
-                                    L'onglet <b>Cohortes</b> suit l'évolution des indicateurs pour des groupes définis
-                                    partageant des
-                                    caractéristiques communes (année de naissance, diagnostic, etc.). Cette analyse aide
-                                    à
-                                    comparer les trajectoires de santé et à évaluer l'impact des politiques et
-                                    interventions
-                                    ciblées.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tendency-section">
-                        <div class="mb-sub-title withpad">
-                            <span>Veuillez choisir un indicateur de santé</span>
-                            <div class="mb-count-badge">
-                                <span id="indicatorCountCohort">0 sélectionné</span>
-                            </div>
-                        </div>
-                        <!-- Indicator list cohorte -->
-                        <div id="lspIndicatorListCohorte" class="lsp-bubble-selection">
-                            <!-- Dynamicaly generated via JS -->
-                        </div>
-                    </div>
-                    <div class="tendency-section">
-                        <div class="mb-sub-title withpad">
-                            <span>Veuillez choisir une ou plusieurs cohorte(s)</span>
-                            <div class="mb-count-badge">
-                                <span id="countCohort">0 sélectionné</span>
-                            </div>
-                        </div>
-                        <!-- Liste de cohortes -->
-                        <div id="lspCohorteList" class="lsp-bubble-selection">
-                            <!-- Dynamicaly generated via JS -->
-                        </div>
-                    </div>
-                    <div class="mb-btn-row cohort special-pad-btn">
-                        <button class="main-btn full-w" id="view-cohort">
-                            <span>Visualiser les tendances par cohorte</span>
-                            <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_EAF4FF.svg') }}"
-                                alt="" class="btn-iconography icon-regular">
-                            <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_FE725C.svg') }}"
-                                alt="" class="btn-iconography icon-solid">
-                        </button>
-                    </div>
-                </div>
-                <!-- COHORT RESULT MAPBOX -->
-                <div class="result-map-box novis" data-nav="cohort">
-                    <div class="close-mb" data-close="result-map-box" data-nav="cohort">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
-                    <div class="mb-title-section">
-                        <div class="mb-title">Résultats cohortes</div>
-                        <div class="mb-subtitle">Tendances du <span style="color:var(--primary)" id="cohortIndicatorName">nombre de
-                                patients</span> par cohortes</div>
-                    </div>
-                    <div class="vert-container">
-                         <div class="cohort-stats-grid">
-                            <!-- Dynamicaly generated via JS -->
-                        </div>
-                        <div class="rls-stats-section mb-graph-container">
-                            <div class="mb-sub-title just-flex-start">
-                                <i class="fa-solid fa-chart-line" style="color:var(--primary)"></i>
-                                <span>Évolution temporelle</span>
-                            </div>
-                            <div class="mb-graph-box">
-                                <div id="container-cohort"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- LAYER MAPBOX-->
-                <div class="map-box novis" data-nav="layer">
-                    <div class="mb-title-section">
-                        <div class="mb-title">Couches thématiques</div>
-                        <div class="mb-subtitle">Ajoutez diverses couches thématiques du Québec</div>
-                    </div>
-                    <div id="thematicLayerList" class="sp-indicators-box">
-                        <!-- <div class="indicator-box" data-type="point">
-                            <div class="ind-top-row">
-                                <div class="ind-badge performance">Point</div>
-                                <div class="ind-plus-box-thematic" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="Ajouter" data-bs-original-title="Ajouter" data-layer="etablissements">
-                                    <i class="fa-solid fa-plus"></i>
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </div>
-                            </div>
-                            <div class="ind-main-section">
-                                <div class="ind-main-top">
-                                    <div class="ind-title">Établissements de santé</div>
-                                    <div class="ind-subtitle">Établissements du réseau de la santé et des services
-                                        sociaux</div>
-                                </div>
-                                <div class="ind-source">Source : Ministère de la Santé et des Services sociaux (MSSS)
-                                </div>
-                            </div>
-                        </div> -->
-                        <div class="indicator-box" data-type="point">
-                            <div class="ind-top-row">
-                                <div class="ind-badge performance">Point</div>
-                                <div class="ind-plus-box-thematic" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="Supprimer" data-bs-original-title="Supprimer" data-layer="installations">
-                                    <i class="fa-solid fa-plus"></i>
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </div>
-                            </div>
-                            <div class="ind-main-section">
-                                <div class="ind-main-top">
-                                    <div class="ind-title">Installations de santé</div>
-                                    <div class="ind-subtitle">Installations du réseau de la santé et des services
-                                        sociaux</div>
-                                </div>
-                                <div class="ind-source">Source : Ministère de la Santé et des Services sociaux (MSSS)
-                                </div>
-                            </div>
-                        </div>
-                        <div class="indicator-box" data-type="polygone">
-                            <div class="ind-top-row">
-                                <div class="ind-badge patientele">Polygone</div>
-                                <div class="ind-plus-box-thematic" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="Ajouter" data-bs-original-title="Ajouter">
-                                    <i class="fa-solid fa-plus"></i>
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </div>
-                            </div>
-                            <div class="ind-main-section">
-                                <div class="ind-main-top">
-                                    <div class="ind-title">Îlots de chaleur</div>
-                                    <div class="ind-subtitle">Îlots de chaleur (zone présentant des températures
-                                        particulièrement élevées) 2020-2022</div>
-                                </div>
-                                <div class="ind-source">Source : Institut national de santé publique du Québec (INSPQ)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- INTERROGATION BOX-->
-                <div class="map-box info-panel novis" data-nav="info">
-                    <div class="close-mb" data-close="info-panel" data-nav="info">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
-                    <div class="mb-title-section">
-                        <div class="mb-title smaller">Information</div>
-                        <div class="mb-subtitle">
-                            <i class="fa-solid fa-location-dot" style="color:var(--primary)"></i>
-                            <span id="info-panel-label">RLS de Jonquière</span>
-                        </div>
-                    </div>
-                    <div class="grid-3">
-                        <!-- Population -->
-                        <div class="mb-stats-box sm-pad">
-                            <div class="mb-sb-title" data-bs-toggle="tooltip" data-bs-placement="top"
-                                data-bs-html="true" title="Population totale en 2022">
-                                Population
-                            </div>
-                            <div class="mb-sb-val">
-                                <div class="mb-sb-val-actual" id="info-panel-pop">279 910</div>
-                            </div>
-                        </div>
-                        <!-- Densité -->
-                        <div class="mb-stats-box sm-pad">
-                            <div class="mb-sb-title" data-bs-toggle="tooltip" data-bs-placement="top"
-                                data-bs-html="true" title="Densité de population en 2022">
-                                Densité population
-                            </div>
-                            <div class="mb-sb-val">
-                                <div class="mb-sb-val-actual" id="info-panel-pop-dens">9 500</div>
-                            </div>
-                        </div>
-                        <!-- Age -->
-                        <div class="mb-stats-box sm-pad">
-                            <div class="mb-sb-title" data-bs-toggle="tooltip" data-bs-placement="top"
-                                data-bs-html="true" title="Âge médian en 2022">
-                                Âge médian
-                            </div>
-                            <div class="mb-sb-val">
-                                <div class="mb-sb-val-actual" id="info-panel-age-med">41.6</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="info-graph-box">
-                        <div class="mb-sb-title info-panel-hist-title">Histogramme - <span
-                                id="info-panel-indicator">coût hospitalisation</span></div>
-                        <div id="container-bellcurve"></div>
-                    </div>
-                </div>
-                <!-- LEGEND BOX -->
-                <div class="legend novis" data-nav="legend">
-                    <div class="legend-header">
-                        <div class="legend-title">Légende</div>
-                        <div class="legend-icon-box" id="legendBtn" data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-html="true" title="Légende">
-                            <i class="fa-solid fa-layer-group"></i>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div id="thematic-layers" class="parent-leg-ctn force-hidden">
-                        <!-- Dynamicaly generated via JS -->
-                    </div>
-                    <div id="query-layers" class="parent-leg-ctn force-hidden">
+                    <!-- MAIN INDICATOR LIST -->
+                    <div id="indicatorList" class="sp-indicators-box max-height">
                         <!-- Dynamicaly generated via JS -->
                     </div>
                 </div>
-                <!-- ALERT -->
-                <div id="mainAlert" class="novis">
-                    <div class="alert-icon">
-                        <img src="{{ url_for('static', filename='image/spinning_load.gif') }}" alt="" class="spinner">
-                        <i class="fa-solid fa-check"></i>
-                        <i class="fa-solid fa-xmark"></i>
-                        <i class="fa-solid fa-info"></i>
+            </div>
+            <!-- TENDENCY MAPBOX-->
+            <div class="map-box no-pad novis" data-nav="tendency">
+                <div class="enlarge-mb" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Grossir">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-maximize-icon lucide-maximize">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                        <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                        <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-minimize-icon lucide-minimize">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+                        <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                        <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+                        <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                    </svg>
+                </div>
+                <div class="top-pad">
+                    <div class="mb-title-section">
+                        <div class="mb-title">Tendances</div>
+                        <div class="mb-subtitle">Visualisez l'évolution des indicateurs</div>
                     </div>
-                    <div class="alert-msg">Vos tendances sont prêtes</div>
+                    <div class="message-ctn-exp">
+                        <div class="message-box-exp">
+                            <div class="message-info-exp">
+                                L'onglet <b>Tendances</b> propose une visualisation graphique de l'évolution des
+                                indicateurs par division géographique (RLS, RTS ou RSS). Il permet de repérer les
+                                variations dans le temps, les écarts
+                                géographiques et les changements structurels.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tendency-section">
+                    <div class="mb-sub-title withpad">
+                        <div class="mb-sub-title-l">
+                            <span>Veuillez choisir le niveau géographique</span>
+                        </div>
+                    </div>
+                    <!-- Level selection -->
+                    <div class="tab-row withpad tendency">
+                        <div class="tab-el level active" data-name="RLS">RLS</div>
+                        <div class="tab-el level" data-name="RTS">RTS</div>
+                        <div class="tab-el level" data-name="RSS">RSS</div>
+                    </div>
+                </div>
+                <div class="tendency-section">
+                    <div class="mb-sub-title withpad">
+                        <div class="mb-sub-title-l">
+                            <span>Veuillez choisir une indicateur de santé</span>
+                        </div>
+                        <div class="mb-count-badge">
+                            <span id="indicatorCount">0 sélectionné</span>
+                        </div>
+                    </div>
+                    <!-- Indicator list -->
+                    <div id="lspIndicatorList" class="lsp-bubble-selection">
+                        <!-- Dynamicaly generated via JS -->
+                    </div>
+                </div>
+                <div class="tendency-section">
+                    <div class="mb-sub-title withpad">
+                        <div class="mb-sub-title-l">
+                            <span>Veuillez choisir une ou plusieurs <span class="tendency-level-name">RLS</span></span>
+                        </div>
+                        <div class="mb-count-badge">
+                            <span id="rlsCount" class="count-badge-level">0 sélectionné</span>
+                            <span id="rtsCount" class="count-badge-level hidden">0 sélectionné</span>
+                            <span id="rssCount" class="count-badge-level hidden">0 sélectionné</span>
+                        </div>
+                    </div>
+                    <!-- RLS list -->
+                    <div id="lspRLSList" class="lsp-bubble-selection tendency">
+                        <!-- Dynamicaly generated via JS -->
+                    </div>
+                    <!-- RTS list -->
+                    <div id="lspRTSList" class="lsp-bubble-selection tendency hidden">
+                        <!-- Dynamicaly generated via JS -->
+                    </div>
+                    <!-- RTS list -->
+                    <div id="lspRSSList" class="lsp-bubble-selection tendency hidden">
+                        <!-- Dynamicaly generated via JS -->
+                    </div>
+                </div>
+                <div class="mb-btn-row special-pad-btn">
+                    <button class="main-btn full-w" id="view-tendency">
+                        <span>Visualiser les tendances par <span class="tendency-level-name">RLS</span></span>
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_EAF4FF.svg') }}" alt=""
+                            class="btn-iconography icon-regular">
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_FE725C.svg') }}" alt=""
+                            class="btn-iconography icon-solid">
+                    </button>
+                </div>
+            </div>
+            <!-- TENDENCY RESULT MAPBOX -->
+            <div class="result-map-box novis" data-nav="tendency">
+                <div class="close-mb" data-close="result-map-box" data-nav="tendency">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="mb-title-section">
+                    <div class="mb-title">Résultats tendances</div>
+                    <div class="mb-subtitle">Tendances <span style="color:var(--primary)"
+                            id="tendencyIndicatorName">coût
+                            d'hospitalisation</span> par <span id="currentTendencyLvl">RLS</span></div>
+                </div>
+                <div class="vert-container">
+                    <div class="rls-stats-grid">
+                        <!-- Dynamicaly generated via JS -->
+                    </div>
+                    <div class="rls-stats-section mb-graph-container">
+                        <div class="space-between"></div>
+                        <div class="mb-sub-title space-between">
+                            <div class="gap8">
+                                <i class="fa-solid fa-chart-line" style="color:var(--primary)"></i>
+                                <span>Évolution temporelle</span>
+                            </div>
+                            <div class="gap20">
+                                <div class="gap8">
+                                    <i class="fa-solid fa-calendar" style="color:var(--primary)"></i>
+                                    <span>Période de visualisation</span>
+                                </div>
+                                <div class="flex-row tendency-slider-ctn" id="tendencyRangeSliderRow">
+                                    <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022"
+                                        data-step="1" data-from="1996" data-type="range"
+                                        data-atlas="tendency-range-slider">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-graph-box">
+                            <div id="container-tendency"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- DISPERSION MAPBOX-->
+            <div class="map-box no-pad novis" data-nav="dispersion">
+                <div class="enlarge-mb" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Grossir">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-maximize-icon lucide-maximize">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                        <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                        <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-minimize-icon lucide-minimize">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+                        <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                        <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+                        <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                    </svg>
+                </div>
+                <div class="top-pad">
+                    <div class="mb-title-section">
+                        <div class="mb-title">Dispersion</div>
+                        <div class="mb-subtitle">Visualisez la dispersion des indicateurs</div>
+                    </div>
+                    <div class="message-ctn-exp">
+                        <div class="message-box-exp">
+                            <div class="message-info-exp">
+                                L'onglet <b>Dispersion</b> permet de visualiser l'évolution des écarts statistiques
+                                entre RLS dans le temps, afin d'évaluer les inégalités territoriales, leur persistance
+                                et les dynamiques de convergence ou de divergence en matière de santé et d'utilisation
+                                des soins.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tendency-section">
+                    <div class="mb-sub-title withpad">
+                        <div class="mb-sub-title-l">
+                            <span>Veuillez choisir une indicateur de santé</span>
+                        </div>
+                        <div class="mb-count-badge">
+                            <span id="indicatorCountDispersion">0 sélectionné</span>
+                        </div>
+                    </div>
+                    <!-- Indicator list -->
+                    <div id="lspIndicatorListDispersion" class="lsp-bubble-selection">
+                        <!-- Dynamicaly generated via JS -->
+                    </div>
+                </div>
+                <div class="mb-btn-row special-pad-btn">
+                    <button class="main-btn full-w" id="view-tendency">
+                        <span>Visualiser les dispersions</span>
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_EAF4FF.svg') }}" alt=""
+                            class="btn-iconography icon-regular">
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_FE725C.svg') }}" alt=""
+                            class="btn-iconography icon-solid">
+                    </button>
+                </div>
+            </div>
+            <!-- COHORT MAPBOX-->
+            <!-- <div class="map-box no-pad novis" data-nav="cohort">
+                <div class="enlarge-mb" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Grossir">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-maximize-icon lucide-maximize">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                        <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                        <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-minimize-icon lucide-minimize">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+                        <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                        <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+                        <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                    </svg>
+                </div>
+                <div class="top-pad">
+                    <div class="mb-title-section">
+                        <div class="mb-title">Cohortes</div>
+                        <div class="mb-subtitle">Visualisez l'évolution des indicateurs par groupes définis</div>
+                    </div>
+                    <div class="message-ctn-exp">
+                        <div class="message-box-exp">
+                            <div class="message-info-exp">
+                                L'onglet <b>Cohortes</b> suit l'évolution des indicateurs pour des groupes définis
+                                partageant des
+                                caractéristiques communes (année de naissance, diagnostic, etc.). Cette analyse aide
+                                à
+                                comparer les trajectoires de santé et à évaluer l'impact des politiques et
+                                interventions
+                                ciblées.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tendency-section">
+                    <div class="mb-sub-title withpad">
+                        <span>Veuillez choisir un indicateur de santé</span>
+                        <div class="mb-count-badge">
+                            <span id="indicatorCountCohort">0 sélectionné</span>
+                        </div>
+                    </div>
+                    <div id="lspIndicatorListCohorte" class="lsp-bubble-selection">
+                    </div>
+                </div>
+                <div class="tendency-section">
+                    <div class="mb-sub-title withpad">
+                        <span>Veuillez choisir une ou plusieurs cohorte(s)</span>
+                        <div class="mb-count-badge">
+                            <span id="countCohort">0 sélectionné</span>
+                        </div>
+                    </div>
+                    <div id="lspCohorteList" class="lsp-bubble-selection">
+                    </div>
+                </div>
+                <div class="mb-btn-row cohort special-pad-btn">
+                    <button class="main-btn full-w" id="view-cohort">
+                        <span>Visualiser les tendances par cohorte</span>
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_EAF4FF.svg') }}" alt=""
+                            class="btn-iconography icon-regular">
+                        <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_FE725C.svg') }}" alt=""
+                            class="btn-iconography icon-solid">
+                    </button>
+                </div>
+            </div> -->
+            <!-- COHORT RESULT MAPBOX -->
+            <!-- <div class="result-map-box novis" data-nav="cohort">
+                <div class="close-mb" data-close="result-map-box" data-nav="cohort">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="mb-title-section">
+                    <div class="mb-title">Résultats cohortes</div>
+                    <div class="mb-subtitle">Tendances du <span style="color:var(--primary)"
+                            id="cohortIndicatorName">nombre de
+                            patients</span> par cohortes</div>
+                </div>
+                <div class="vert-container">
+                    <div class="cohort-stats-grid">
+                    </div>
+                    <div class="rls-stats-section mb-graph-container">
+                        <div class="mb-sub-title just-flex-start">
+                            <i class="fa-solid fa-chart-line" style="color:var(--primary)"></i>
+                            <span>Évolution temporelle</span>
+                        </div>
+                        <div class="mb-graph-box">
+                            <div id="container-cohort"></div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <!-- LAYER MAPBOX-->
+            <div class="map-box novis" data-nav="layer">
+                <div class="mb-title-section">
+                    <div class="mb-title">Couches thématiques</div>
+                    <div class="mb-subtitle">Ajoutez diverses couches thématiques du Québec</div>
+                </div>
+                <div id="thematicLayerList" class="sp-indicators-box">
+                    <div class="indicator-box-thematic" data-type="point">
+                        <div class="ind-top-row">
+                            <div class="ind-badge performance">Point</div>
+                            <div class="ind-plus-box-thematic" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="Ajouter" data-bs-original-title="Ajouter" data-layer="installations">
+                                <i class="fa-solid fa-plus"></i>
+                                <i class="fa-regular fa-trash-can"></i>
+                            </div>
+                        </div>
+                        <div class="ind-main-section">
+                            <div class="ind-main-top">
+                                <div class="ind-title">Installations de santé</div>
+                                <div class="ind-subtitle">Installations du réseau de la santé et des services
+                                    sociaux</div>
+                            </div>
+                            <div class="ind-source">Source : Ministère de la Santé et des Services sociaux (MSSS)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="indicator-box-thematic" data-type="polygone">
+                        <div class="ind-top-row">
+                            <div class="ind-badge patientele">Polygone</div>
+                            <div class="ind-plus-box-thematic" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="Ajouter" data-bs-original-title="Ajouter">
+                                <i class="fa-solid fa-plus"></i>
+                                <i class="fa-regular fa-trash-can"></i>
+                            </div>
+                        </div>
+                        <div class="ind-main-section">
+                            <div class="ind-main-top">
+                                <div class="ind-title">Îlots de chaleur</div>
+                                <div class="ind-subtitle">Îlots de chaleur (zone présentant des températures
+                                    particulièrement élevées) 2020-2022</div>
+                            </div>
+                            <div class="ind-source">Source : Institut national de santé publique du Québec (INSPQ)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- PROJECT MAPBOX-->
+            <div class="map-box no-pad novis" data-nav="project">
+                <div class="top-pad">
+                    <div class="mb-title-section">
+                        <div class="mb-title">Projets GeoSanté</div>
+                        <div class="mb-subtitle">Consulter un des projets thématiques de la plateforme</div>
+                    </div>
+                    <div class="message-ctn-exp">
+                        <div class="message-box-exp">
+                            <div class="message-info-exp">
+                                L'onglet <b>Projets</b> présente une sélection de projets thématiques disponibles sur la
+                                plateforme.
+                                Ces projets mettent en valeur les résultats d'études réalisées par ApexMachina,
+                                explorables de manière dynamique à l'aide de l'interface GeoSanté.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-section withpad">
+                    <div id="projectList" class="sp-indicators-box">
+                        <div class="project-box">
+                            <div class="ind-top-row">
+                                <div class="ind-badge performance">Plateforme complète</div>
+                                <div class="you-are-here hidden" data-id="999">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span>Vous êtes ici</span>
+                                </div>
+                            </div>
+                            <div class="ind-main-section">
+                                <div class="ind-main-top">
+                                    <div class="ind-title">Aucun projet</div>
+                                    <div class="ind-subtitle">Version complète de l'interface GeoSanté donnant accès à
+                                        l'ensemble des 146 indicateurs disponibles, sans restriction thématique.</div>
+                                </div>
+                                <div class="project-consult-btn" data-id="999">
+                                    <span>Consulter l'outil complet</span>
+                                    <i class="fa-solid fa-arrow-right-long"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- INTERROGATION BOX-->
+            <div class="map-box info-panel novis" data-nav="info">
+                <div class="close-mb" data-close="info-panel" data-nav="info">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="mb-title-section">
+                    <div class="mb-title smaller">Information</div>
+                    <div class="mb-subtitle">
+                        <i class="fa-solid fa-location-dot" style="color:var(--primary)"></i>
+                        <span id="info-panel-label">RLS de Jonquière</span>
+                    </div>
+                </div>
+                <div class="grid-3">
+                    <!-- Population -->
+                    <div class="mb-stats-box sm-pad">
+                        <div class="mb-sb-title" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                            title="Population totale en 2022">
+                            Population
+                        </div>
+                        <div class="mb-sb-val">
+                            <div class="mb-sb-val-actual" id="info-panel-pop">279 910</div>
+                        </div>
+                    </div>
+                    <!-- Densité -->
+                    <div class="mb-stats-box sm-pad">
+                        <div class="mb-sb-title" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                            title="Densité de population en 2022">
+                            Densité population
+                        </div>
+                        <div class="mb-sb-val">
+                            <div class="mb-sb-val-actual" id="info-panel-pop-dens">9 500</div>
+                        </div>
+                    </div>
+                    <!-- Age -->
+                    <div class="mb-stats-box sm-pad">
+                        <div class="mb-sb-title" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                            title="Âge médian en 2022">
+                            Âge médian
+                        </div>
+                        <div class="mb-sb-val">
+                            <div class="mb-sb-val-actual" id="info-panel-age-med">41.6</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-graph-box">
+                    <div class="mb-sb-title info-panel-hist-title">Histogramme - <span class="info-panel-indicator">coût
+                            hospitalisation</span></div>
+                    <div id="container-bellcurve"></div>
+                </div>
+                <div class="info-graph-box correlations">
+                    <div class="mb-sb-title info-panel-hist-title">Corrélations entre indicateurs - <span
+                            class="info-panel-indicator">coût hospitalisation</span></div>
+                    <div id="container-correlation"></div>
+                </div>
+                <div class="info-graph-box timeseries">
+                    <div class="mb-sb-title info-panel-hist-title">Série temporelle - <span
+                            class="info-panel-indicator-short">coût hospitalisation</span></div>
+                    <div id="container-timeseries"></div>
+                </div>
+            </div>
+            <!-- LEGEND BOX -->
+            <div class="legend novis" data-nav="legend">
+                <div class="legend-header">
+                    <div class="legend-title">Légende</div>
+                    <div class="legend-icon-box" id="legendBtn" data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-html="true" title="Légende">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div id="thematic-layers" class="parent-leg-ctn force-hidden">
+                    <!-- Dynamicaly generated via JS -->
+                </div>
+                <div id="query-layers" class="parent-leg-ctn force-hidden">
+                    <!-- Dynamicaly generated via JS -->
+                </div>
+            </div>
+            <!-- ALERT -->
+            <div id="mainAlert" class="novis">
+                <div class="alert-icon">
+                    <img src="{{ url_for('static', filename='image/spinning_load.gif') }}" alt="" class="spinner">
+                    <i class="fa-solid fa-check"></i>
+                    <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-info"></i>
+                </div>
+                <div class="alert-msg">Vos tendances sont prêtes</div>
+            </div>
+            <!-- METADATA MODAL -->
+            <div class="modal fade" id="metadataModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content modal-content-atlas">
+                        <div class="close-modal" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i>
+                        </div>
+                        <div class="mb-title-section">
+                            <div class="mb-title smaller">Information sur la couche</div>
+                        </div>
+                        <div class="modal-main-section">
+                            <div class="mr-inline">
+                                <div class="mr-title">Catégorie :</div>
+                                <div class="mr-val" id="mr-val-category">
+
+                                </div>
+                            </div>
+                            <div class="mr-inline">
+                                <div class="mr-title">Titre :</div>
+                                <div class="mr-val" id="mr-val-title"></div>
+                            </div>
+                            <div class="mr-inline">
+                                <div class="mr-title">ID :</div>
+                                <div class="mr-val" id="mr-val-id"></div>
+                            </div>
+                            <div class="mr-inline">
+                                <div class="mr-title">Unité :</div>
+                                <div class="mr-val" id="mr-val-unit"></div>
+                            </div>
+                            <div class="mr-inline">
+                                <div class="mr-title">Source :</div>
+                                <div class="mr-val" id="mr-val-source"></div>
+                            </div>
+                            <div class="mr-column">
+                                <div class="mr-title">Description courte :</div>
+                                <div class="mr-val" id="mr-val-short_description"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block js %}
-    <script src="{{ url_for('static', filename='js/gradients.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/mapinit.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/tendency_checkbox.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/tendency.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/cohort.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/gradients.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

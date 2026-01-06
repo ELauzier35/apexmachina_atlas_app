@@ -58,7 +58,7 @@ def query_atlas(indicator_list):
     return full_output_dict
 
 
-def query_tendencies(ind_id, rls_codes):
+def query_tendencies(ind_id, rls_codes, level):
 
     full_output_dict = {}
     
@@ -69,11 +69,26 @@ def query_tendencies(ind_id, rls_codes):
         time_series = []
         
         for year in range(1996, 2023):
-            time_series.append(ind_object_data[str(year)]['RLS'][code]['avg'])
+            time_series.append(ind_object_data[str(year)][level][code]['avg'])
         
         full_output_dict[code] = time_series
     
     return full_output_dict
+
+def query_provincial_tendency(ind_id):
+
+    ts_array = []
+
+    ind_object = indicators_atlas.find_one({'id': {'$eq': ind_id}},{"_id": 0})
+    ind_object_data = ind_object['data']
+
+    for year in range(1996, 2023):
+        ts_array.append(
+            ind_object_data[str(year)]["Province"]["avg"]
+        )
+
+    return ts_array
+
 
 def query_tendencies_coh(ind_id, coh_codes):
 
