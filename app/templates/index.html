@@ -58,7 +58,6 @@
             <div class="tour-dot"></div>
             <div class="tour-dot"></div>
             <div class="tour-dot"></div>
-            <div class="tour-dot"></div>
         </div>
         <div class="tour-btn-row">
             <button class="tour-btn-previous hidden" id="tourPreviousBtn">
@@ -164,13 +163,7 @@
                 </div>
                 <div class="prj-col-section">
                     <span class="prj-col-title">Description du projet :</span>
-                    <span class="prj-col-val" id="prj-long-description">Ce projet présente les résultats du papier. Duis
-                        aute irure dolor in
-                        reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-                        laborum.
-                        Cette approche a permis de soulever les disparités territoriales
-                        importantes blab bla bla.
+                    <span class="prj-col-val" id="prj-long-description">
                     </span>
                 </div>
                 <div class="prj-col-section">
@@ -517,13 +510,53 @@
                     </div>
                 </div>
                 <div class="mb-btn-row special-pad-btn">
-                    <button class="main-btn full-w" id="view-tendency">
+                    <button class="main-btn full-w" id="view-dispersion">
                         <span>Visualiser les dispersions</span>
                         <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_EAF4FF.svg') }}" alt=""
                             class="btn-iconography icon-regular">
                         <img src="{{ url_for('static', filename='image/iconography/rarrow_mid_FE725C.svg') }}" alt=""
                             class="btn-iconography icon-solid">
                     </button>
+                </div>
+            </div>
+            <!-- DISPERSION RESULT MAPBOX -->
+            <div class="result-map-box novis" data-nav="dispersion">
+                <div class="close-mb" data-close="result-map-box" data-nav="dispersion">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="mb-title-section">
+                    <div class="mb-title">Résultats dispersions</div>
+                    <div class="mb-subtitle">Dispersions <span style="color:var(--primary)"
+                            id="dispersionIndicatorName">coût
+                            d'hospitalisation</span> par RLS</div>
+                </div>
+                <div class="vert-container">
+                    <div class="dispersion-stats-grid">
+                        <!-- Dynamicaly generated via JS -->
+                    </div>
+                    <div class="rls-stats-section mb-graph-container">
+                        <div class="space-between"></div>
+                        <div class="mb-sub-title space-between">
+                            <div class="gap8">
+                                <i class="fa-solid fa-chart-line" style="color:var(--primary)"></i>
+                                <span>Évolution temporelle</span>
+                            </div>
+                            <div class="gap20">
+                                <div class="gap8">
+                                    <i class="fa-solid fa-calendar" style="color:var(--primary)"></i>
+                                    <span>Période de visualisation</span>
+                                </div>
+                                <div class="flex-row tendency-slider-ctn" id="dispersionRangeSliderRow">
+                                    <input type="text" class="main-ion" value="1996" data-min="1996" data-max="2022"
+                                        data-step="1" data-from="1996" data-type="range"
+                                        data-atlas="dispersion-range-slider">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-graph-box">
+                            <div id="container-dispersion"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- COHORT MAPBOX-->

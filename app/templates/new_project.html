@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/new_proj.css') }}">
+<script>
+    atlas_indicators = {{ atlas_indicators | tojson }}
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div class="title-banner">
+        <i class="fa-solid fa-folder-plus"></i>
+        <h1>Nouveau projet GeoSanté</h1>
+    </div>
+
+    <div class="page-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-content">
+                <div class="nav-title">À remplir</div>
+                <a href="#section-info" class="nav-link active" data-section="section-info">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Informations</span>
+                </a>
+                <a href="#section-publication" class="nav-link" data-section="section-publication">
+                    <i class="fa-solid fa-book"></i>
+                    <span>Publication</span>
+                </a>
+                <a href="#section-indicators" class="nav-link" data-section="section-indicators">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span>Indicateurs</span>
+                </a>
+                <a href="#section-map" class="nav-link" data-section="section-map">
+                    <i class="fa-solid fa-map"></i>
+                    <span>Carte</span>
+                </a>
+                <a href="#section-tour" class="nav-link" data-section="section-tour">
+                    <i class="fa-solid fa-route"></i>
+                    <span>Visite guidée</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Form Content -->
+        <div class="main-section">
+            <form method="post">
+
+                <!-- Section 1: Informations générales -->
+                <section id="section-info" class="form-card">
+                    <div class="card-header">
+                        <div class="card-header-icon bg-blue-100 text-blue-600">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">Informations générales</h2>
+                            <p class="card-subtitle">Détails de base du projet</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <label for="short-title">Titre court :</label>
+                        <input name="short-title" id="short-title" placeholder="(Ex. Projet Équité)">
+
+                        <label for="long-title">Titre long :</label>
+                        <input name="long-title" id="long-title"
+                            placeholder="(Ex. Disparités territoriales de santé et d'accès aux soins au Québec)">
+
+                        <label for="short-description">Description courte :</label>
+                        <input name="short-description" id="short-description"
+                            placeholder="(Ex. Ce projet présente les disparités territoriales de santé et d'accès aux soins au Québec)">
+
+                        <label for="long-description">Description longue :</label>
+                        <textarea name="long-description" id="long-description"
+                            placeholder="(Ex. Ce projet présente les résultats du papier. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.)"></textarea>
+
+                        <span class="pre">Couleur du badge :</span>
+                        <div class="flex-row-badge">
+                            <label for="red" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-red-50 text-red-900 border !border-red-200">
+                                <input type="radio" name="badge-color" value="red" id="red">
+                                <span>Rouge</span>
+                            </label>
+                            <label for="orange" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-orange-50 text-orange-900 border !border-orange-200">
+                                <input type="radio" name="badge-color" value="orange" id="orange">
+                                <span>Orange</span>
+                            </label>
+                            <label for="amber" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-amber-50 text-amber-900 border !border-amber-200">
+                                <input type="radio" name="badge-color" value="amber" id="amber">
+                                <span>Ambre</span>
+                            </label>
+                            <label for="yellow" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-yellow-50 text-yellow-900 border !border-yellow-200">
+                                <input type="radio" name="badge-color" value="yellow" id="yellow">
+                                <span>Jaune</span>
+                            </label>
+                            <label for="lime" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-lime-50 text-lime-900 border !border-lime-200">
+                                <input type="radio" name="badge-color" value="lime" id="lime">
+                                <span>Lime</span>
+                            </label>
+                            <label for="green" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-green-50 text-green-900 border !border-green-200">
+                                <input type="radio" name="badge-color" value="green" id="green">
+                                <span>Vert</span>
+                            </label>
+                            <label for="emerald" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-emerald-50 text-emerald-900 border !border-emerald-200">
+                                <input type="radio" name="badge-color" value="emerald" id="emerald">
+                                <span>Émeraude</span>
+                            </label>
+                            <label for="teal" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-teal-50 text-teal-900 border !border-teal-200">
+                                <input type="radio" name="badge-color" value="teal" id="teal">
+                                <span>Sarcelle</span>
+                            </label>
+                            <label for="cyan" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-cyan-50 text-cyan-900 border !border-cyan-200">
+                                <input type="radio" name="badge-color" value="cyan" id="cyan">
+                                <span>Cyan</span>
+                            </label>
+                            <label for="sky" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-sky-50 text-sky-900 border !border-sky-200">
+                                <input type="radio" name="badge-color" value="sky" id="sky">
+                                <span>Ciel</span>
+                            </label>
+                            <label for="blue" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-blue-50 text-blue-900 border !border-blue-200">
+                                <input type="radio" name="badge-color" value="blue" id="blue">
+                                <span>Bleu</span>
+                            </label>
+                            <label for="indigo" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-indigo-50 text-indigo-900 border !border-indigo-200">
+                                <input type="radio" name="badge-color" value="indigo" id="indigo">
+                                <span>Indigo</span>
+                            </label>
+                            <label for="violet" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-violet-50 text-violet-900 border !border-violet-200">
+                                <input type="radio" name="badge-color" value="violet" id="violet">
+                                <span>Violet</span>
+                            </label>
+                            <label for="purple" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-purple-50 text-purple-900 border !border-purple-200">
+                                <input type="radio" name="badge-color" value="purple" id="purple">
+                                <span>Pourpre</span>
+                            </label>
+                            <label for="fuchsia" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-fuchsia-50 text-fuchsia-900 border !border-fuchsia-200">
+                                <input type="radio" name="badge-color" value="fuchsia" id="fuchsia">
+                                <span>Fuchsia</span>
+                            </label>
+                            <label for="pink" class="badge inline-flex items-center gap-2 px-3 py-2.5 rounded-full bg-pink-50 text-pink-900 border !border-pink-200">
+                                <input type="radio" name="badge-color" value="pink" id="pink">
+                                <span>Rose</span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Publication -->
+                <section id="section-publication" class="form-card">
+                    <div class="card-header">
+                        <div class="card-header-icon bg-emerald-100 text-emerald-600">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">Publication</h2>
+                            <p class="card-subtitle">Informations sur la publication</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <label for="publication-citation">Citation :</label>
+                        <textarea name="publication-citation" id="publication-citation"
+                            placeholder="(Ex. Echevin, D. (2025). Anatomie de l'offre médicale en première ligne : contraintes et paradoxes. CRCHUS, Université de Sherbrooke / Fondation Claude-Brunet.)"></textarea>
+
+                        <label for="publication-doi">DOI :</label>
+                        <input name="publication-doi" id="publication-doi"
+                            placeholder="(Ex. https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5671645)">
+
+                        <label for="publication-url">URL (site ApexMachina) :</label>
+                        <input name="publication-url" id="publication-url"
+                            placeholder="(Ex. https://apexmachina.com/fr/publications/#P95137280419)">
+                    </div>
+                </section>
+
+                <!-- Section 3: Indicateurs -->
+                <section id="section-indicators" class="form-card">
+                    <div class="card-header">
+                        <div class="card-header-icon bg-violet-100 text-violet-600">
+                            <i class="fa-solid fa-chart-simple"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">Indicateurs</h2>
+                            <p class="card-subtitle">Sélectionnez les indicateurs à inclure dans le projet</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="indicator-category">
+                            <div class="category-title">
+                                <span>Coût et performance</span>
+                            </div>
+                            <div id="indicatorCost" class="flex-row-badge smaller-gap"></div>
+                        </div>
+
+                        <div class="indicator-category">
+                            <div class="category-title">
+                                <span>Patientèle</span>
+                            </div>
+                            <div id="indicatorPatient" class="flex-row-badge smaller-gap"></div>
+                        </div>
+
+                        <div class="indicator-category">
+                            <div class="category-title">
+                                <span>Accès aux services de santé</span>
+                            </div>
+                            <div id="indicatorAccess" class="flex-row-badge smaller-gap"></div>
+                        </div>
+
+                        <div class="indicator-category">
+                            <div class="category-title">
+                                <span>Socio-économique</span>
+                            </div>
+                            <div id="indicatorSocio" class="flex-row-badge smaller-gap"></div>
+                        </div>
+
+                        <div class="indicator-category">
+                            <div class="category-title">
+                                <span>Géospatiale</span>
+                            </div>
+                            <div id="indicatorGeospatial" class="flex-row-badge smaller-gap"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Carte -->
+                <section id="section-map" class="form-card">
+                    <div class="card-header">
+                        <div class="card-header-icon bg-cyan-100 text-cyan-600">
+                            <i class="fa-solid fa-map"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">Indicateurs par défaut sur la carte</h2>
+                            <p class="card-subtitle">Choisissez les indicateurs affichés par défaut à l'ouverture du projet</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="indicatorOnMap" class="flex-row-badge smaller-gap">
+                            <span class="no-ind">Aucun indicateur choisi</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 5: Visite guidée -->
+                <section id="section-tour" class="form-card">
+                    <div class="card-header">
+                        <div class="card-header-icon bg-orange-100 text-orange-600">
+                            <i class="fa-solid fa-route"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">Visite guidée</h2>
+                            <p class="card-subtitle">Créez les étapes de la visite guidée du projet</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="add-tour-step inline-flex items-center gap-2 px-4 py-3 rounded-full">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <span>Ajouter une étape</span>
+                        </div>
+                        <div id="tourStepList"></div>
+                    </div>
+                </section>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Créer le projet</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="{{ url_for('static', filename='js/new_proj.js') }}"></script>
+{% endblock %}

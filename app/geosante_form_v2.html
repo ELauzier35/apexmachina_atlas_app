@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoSanté.ai – Demande d'analyse ou de projet</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2d5a8a;
+            --primary-dark: #152a45;
+            --accent: #c9a227;
+            --accent-light: #e6c755;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-section: #f1f5f9;
+            --bg-dark: #1e3a5f;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-focus: #2d5a8a;
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 2rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(201, 162, 39, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(201, 162, 39, 0.3);
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--accent);
+        }
+
+        .logo-text {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .progress-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 2px;
+            background: var(--primary);
+            transform: translateY(-50%);
+            z-index: 1;
+            transition: width 0.4s ease;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.2);
+        }
+
+        .step.completed .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .step-label {
+            display: none;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-align: center;
+            max-width: 70px;
+        }
+
+        @media (min-width: 768px) {
+            .step-label {
+                display: block;
+            }
+        }
+
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Main Form */
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        /* Form Cards */
+        .form-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .form-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-card-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        /* Apexmachina Presentation Styles */
+        .apex-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .apex-hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 40%;
+            height: 160%;
+            background: radial-gradient(ellipse, rgba(201, 162, 39, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .apex-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .apex-hero h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .apex-hero h3 .apex-logo-mini {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(201, 162, 39, 0.3);
+        }
+
+        .apex-hero h3 .apex-logo-mini svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--accent);
+        }
+
+        .apex-hero .tagline {
+            font-size: 1.125rem;
+            color: var(--accent-light);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .apex-hero p {
+            color: rgba(255,255,255,0.9);
+            line-height: 1.7;
+        }
+
+        .apex-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .apex-stat {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .apex-stat-value {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .apex-stat-label {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+            margin-top: 0.25rem;
+        }
+
+        /* 5 Principles */
+        .principles-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .principle-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--bg-section);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--accent);
+            transition: all 0.2s ease;
+        }
+
+        .principle-card:hover {
+            background: #e8ecf1;
+            transform: translateX(4px);
+        }
+
+        .principle-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .principle-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        .principle-content h4 {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .principle-content p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        @media (min-width: 600px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .service-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+        }
+
+        .service-card h4 {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .service-card h4 svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .service-card p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Process Steps */
+        .process-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5rem;
+            bottom: 0.5rem;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--primary));
+        }
+
+        .process-step {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .process-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .process-step::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .process-step h4 {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .process-step p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Quote Block */
+        .quote-block {
+            background: linear-gradient(135deg, var(--bg-section) 0%, #e2e8f0 100%);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .quote-block p {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 0.75rem;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            color: var(--primary);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        label .required {
+            color: var(--error);
+            margin-left: 0.25rem;
+        }
+
+        .label-hint {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+            margin-top: 0.25rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="url"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.15);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        /* Radio & Checkbox Cards */
+        .option-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .option-grid.cols-2 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .option-card {
+            position: relative;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-card);
+        }
+
+        .option-card:hover {
+            border-color: var(--primary-light);
+            background: rgba(30, 58, 95, 0.02);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background: rgba(30, 58, 95, 0.05);
+        }
+
+        .option-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .option-content {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .option-check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .option-card.checkbox .option-check {
+            border-radius: var(--radius-sm);
+        }
+
+        .option-card.selected .option-check {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .option-check svg {
+            width: 14px;
+            height: 14px;
+            color: white;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease;
+        }
+
+        .option-card.selected .option-check svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .option-text h4 {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .option-text p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Support Level Cards */
+        .support-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .support-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .support-card {
+            position: relative;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            text-align: center;
+        }
+
+        .support-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .support-card.selected {
+            border-color: var(--primary);
+            background: rgba(30, 58, 95, 0.05);
+        }
+
+        .support-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .support-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 999px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .support-card:nth-child(1) .support-badge {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .support-card:nth-child(2) .support-badge {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .support-card:nth-child(3) .support-badge {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .support-card h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .support-card p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Indicator Categories */
+        .indicator-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--bg-section);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .category-header:hover {
+            background: #e2e8f0;
+        }
+
+        .category-header h4 {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-header .count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .category-header .chevron {
+            transition: transform 0.2s ease;
+        }
+
+        .category-header.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .category-content {
+            display: none;
+            padding: 1rem;
+        }
+
+        .category-content.open {
+            display: block;
+        }
+
+        .indicator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .indicator-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .indicator-item:hover {
+            background: var(--bg-section);
+        }
+
+        .indicator-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .indicator-item label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+        }
+
+        .search-box input {
+            padding-left: 2.75rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-section);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--primary-dark);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent-light);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* Info Box */
+        .info-box {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(30, 58, 95, 0.08);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .info-box p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Selected Tags */
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: var(--primary);
+            color: white;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border-radius: 999px;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .tag button:hover {
+            opacity: 1;
+        }
+
+        .tag button svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: var(--bg-section);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-section h4 {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+        }
+
+        .summary-value {
+            color: var(--text-primary);
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--text-primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast svg {
+            width: 20px;
+            height: 20px;
+            color: var(--success);
+        }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            gap: 1rem;
+        }
+
+        @media (min-width: 600px) {
+            .two-col {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* External Links */
+        .external-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-sm);
+            color: white;
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .external-link:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .external-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header {
+                padding: 1.5rem 1rem;
+            }
+
+            .form-container {
+                padding: 1.5rem 1rem 3rem;
+            }
+
+            .form-card {
+                padding: 1.25rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                width: 100%;
+            }
+
+            .apex-hero {
+                padding: 1.5rem;
+            }
+
+            .apex-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.5L17.5 8 12 11.5 6.5 8 12 4.5zM6 9.5l5 3v6l-5-3v-6zm7 9v-6l5-3v6l-5 3z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Geo<span>Santé</span>.ai</span>
+            </div>
+            <h1>Demande d'analyse ou de projet</h1>
+            <p>Soumettez votre demande d'analyse territoriale ou de projet d'aide à la décision en santé.</p>
+        </div>
+    </header>
+
+    <nav class="progress-container">
+        <div class="progress-wrapper">
+            <div class="progress-steps">
+                <div class="progress-line" id="progressLine"></div>
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <span class="step-label">Profil</span>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <span class="step-label">Apexmachina</span>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <span class="step-label">Projet</span>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div>
+                    <span class="step-label">Indicateurs</span>
+                </div>
+                <div class="step" data-step="5">
+                    <div class="step-number">5</div>
+                    <span class="step-label">Compléments</span>
+                </div>
+                <div class="step" data-step="6">
+                    <div class="step-number">6</div>
+                    <span class="step-label">Support</span>
+                </div>
+                <div class="step" data-step="7">
+                    <div class="step-number">7</div>
+                    <span class="step-label">Contact</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="form-container">
+        <form id="geoSanteForm">
+            <!-- Section 1: Profile -->
+            <section class="form-section active" data-section="1">
+                <div class="section-header">
+                    <h2>Identification du profil utilisateur</h2>
+                    <p>Indiquez votre profil afin d'adapter la demande à votre contexte professionnel.</p>
+                </div>
+
+                <div class="info-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                    <p>Identifier votre profil permet à GeoSanté.ai de contextualiser votre demande et d'adapter le langage ainsi que les exemples pertinents à votre domaine d'expertise.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Votre rôle professionnel
+                    </div>
+                    <div class="option-grid">
+                        <label class="option-card" onclick="selectOption(this, 'profile')">
+                            <input type="radio" name="profile" value="etudiant">
+                            <div class="option-content">
+                                <div class="option-check">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <div class="option-text">
+                                    <h4>Étudiant</h4>
+                                    <p>MSc/PhD en santé, data science ou domaine connexe</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="option-card" onclick="selectOption(this, 'profile')">
+                            <input type="radio" name="profile" value="chercheur">
+                            <div class="option-content">
+                                <div class="option-check">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <div class="option-text">
+                                    <h4>Chercheur en santé publique</h4>
+                                    <p>Épidémiologie, santé communautaire, recherche universitaire</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="option-card" onclick="selectOption(this, 'profile')">
+                            <input type="radio" name="profile" value="clinicien">
+                            <div class="option-content">
+                                <div class="option-check">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <div class="option-text">
+                                    <h4>Clinicien</h4>
+                                    <p>Médecin, infirmier(ère) ou professionnel de la santé</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="option-card" onclick="selectOption(this, 'profile')">
+                            <input type="radio" name="profile" value="gestionnaire">
+                            <div class="option-content">
+                                <div class="option-check">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <div class="option-text">
+                                    <h4>Gestionnaire du système de santé</h4>
+                                    <p>Cadre MSSS, directeur d'établissement, DSP</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="option-card" onclick="selectOption(this, 'profile')">
+                            <input type="radio" name="profile" value="industrie">
+                            <div class="option-content">
+                                <div class="option-check">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <div class="option-text">
+                                    <h4>Industrie pharmaceutique</h4>
+                                    <p>Accès au marché, responsable médical, affaires réglementaires</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="option-card" onclick="selectOption(this, 'profile')">
+                            <input type="radio" name="profile" value="actuaire">
+                            <div class="option-content">
+                                <div class="option-check">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <div class="option-text">
+                                    <h4>Actuaire / Économiste de la santé</h4>
+                                    <p>Fédération médicale, assurance, analyse économique</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1.25rem;">
+                        <label for="profileOther">Autre rôle (préciser)</label>
+                        <input type="text" id="profileOther" placeholder="Ex: Consultant en transformation numérique">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="organization">Organisation <span class="required">*</span></label>
+                        <input type="text" id="organization" placeholder="Ex: Université de Sherbrooke, CIUSSS de l'Estrie" required>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 2: Apexmachina Presentation (NEW) -->
+            <section class="form-section" data-section="2">
+                <div class="section-header">
+                    <h2>Découvrez Apexmachina</h2>
+                    <p>Avant de définir votre projet, prenez un moment pour comprendre notre approche et comment nous pouvons vous accompagner.</p>
+                </div>
+
+                <!-- Hero Block -->
+                <div class="apex-hero">
+                    <div class="apex-hero-content">
+                        <h3>
+                            <div class="apex-logo-mini">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.5L17.5 8 12 11.5 6.5 8 12 4.5zM6 9.5l5 3v6l-5-3v-6zm7 9v-6l5-3v6l-5 3z"/>
+                                </svg>
+                            </div>
+                            Apexmachina
+                        </h3>
+                        <p class="tagline">Infrastructure de Décision Responsable</p>
+                        <p>Apexmachina est un bureau d'architecture de décision publique. Nous développons <strong>GeoSanté.ai</strong>, une plateforme d'analyses territoriales et d'aide à la décision en santé pour les acteurs du réseau québécois. Notre mission : combler le fossé entre la prédiction et l'action en structurant la décision de manière rigoureuse, transparente et évaluable.</p>
+                        
+                        <div class="external-links">
+                            <a href="https://apexmachina.com" target="_blank" class="external-link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                                Site web
+                            </a>
+                            <a href="https://geosante.ai" target="_blank" class="external-link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                                Plateforme GeoSanté.ai
+                            </a>
+                        </div>
+
+                        <div class="apex-stats">
+                            <div class="apex-stat">
+                                <div class="apex-stat-value">5</div>
+                                <div class="apex-stat-label">Principes fondamentaux</div>
+                            </div>
+                            <div class="apex-stat">
+                                <div class="apex-stat-value">2</div>
+                                <div class="apex-stat-label">Plateformes SaaS</div>
+                            </div>
+                            <div class="apex-stat">
+                                <div class="apex-stat-value">100+</div>
+                                <div class="apex-stat-label">Indicateurs santé</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 Principles -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        Notre approche : 5 principes pour des décisions justes et efficaces
+                    </div>
+
+                    <div class="principles-grid">
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10 9 9 9 8 9"/>
+                                </svg>
+                            </div>
+                            <div class="principle-content">
+                                <h4>1. Évaluabilité par conception</h4>
+                                <p>Nous intégrons la mesure de l'effet causal réel dès la conception du projet. Cela implique de prévoir des groupes de contrôle et des méthodes d'évaluation rigoureuses pour mesurer l'impact réel des interventions.</p>
+                            </div>
+                        </div>
+
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </div>
+                            <div class="principle-content">
+                                <h4>2. Modélisation des incitatifs</h4>
+                                <p>Nous simulons et anticipons les comportements induits par les politiques pour éviter les effets pervers. Par exemple, simuler l'effet de changements tarifaires sur le comportement des professionnels de santé.</p>
+                            </div>
+                        </div>
+
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <circle cx="12" cy="12" r="6"/>
+                                    <circle cx="12" cy="12" r="2"/>
+                                </svg>
+                            </div>
+                            <div class="principle-content">
+                                <h4>3. Ciblage décisionnel</h4>
+                                <p>Nous privilégions les métriques orientées action – l'effet causal attendu τ(x) plutôt que le simple risque. L'objectif est d'allouer les ressources selon leur rendement marginal, là où elles auront le plus d'impact.</p>
+                            </div>
+                        </div>
+
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </div>
+                            <div class="principle-content">
+                                <h4>4. Transparence des arbitrages</h4>
+                                <p>Nous rendons explicites les compromis (efficience vs équité) et permettons au décideur de les ajuster. Chaque recommandation est accompagnée de ses facteurs contributifs et de sa justification.</p>
+                            </div>
+                        </div>
+
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                            <div class="principle-content">
+                                <h4>5. Indépendance et auditabilité</h4>
+                                <p>Nous garantissons l'ouverture des données et méthodes via API et audits tiers. Aucun décideur n'est enfermé dans une « boîte noire » technologique – chaque décision est traçable et auditable.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-block">
+                        <p>« GeoImpact et GeoSanté ne produisent pas des réponses, ils produisent des questions mieux posées. »</p>
+                        <cite>— Philosophie Apexmachina</cite>
+                    </div>
+                </div>
+
+                <!-- What we can do -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                        Ce que nous pouvons faire pour vous
+                    </div>
+
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <h4>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                Cartographie territoriale
+                            </h4>
+                            <p>Visualisez les risques, indicateurs et besoins par établissement, région ou profil de population pour une planification stratégique au niveau du réseau de santé.</p>
+                        </div>
+
+                        <div class="service-card">
+                            <h4>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="3" y1="9" x2="21" y2="9"/>
+                                    <line x1="9" y1="21" x2="9" y2="9"/>
+                                </svg>
+                                Simulateur de scénarios
+                            </h4>
+                            <p>Testez des hypothèses d'allocation de ressources : « Si j'ajoute 2 infirmières de liaison, combien de réadmissions pourrai-je éviter et où les affecter ? »</p>
+                        </div>
+
+                        <div class="service-card">
+                            <h4>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 20V10"/>
+                                    <path d="M12 20V4"/>
+                                    <path d="M6 20v-6"/>
+                                </svg>
+                                Tableau de bord temps réel
+                            </h4>
+                            <p>Suivez vos indicateurs de performance clés avec des alertes automatisées en cas de dépassement de seuils ou de situations critiques nécessitant une intervention.</p>
+                        </div>
+
+                        <div class="service-card">
+                            <h4>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 11l3 3L22 4"/>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                </svg>
+                                Traçabilité et audit
+                            </h4>
+                            <p>Chaque décision et recommandation est enregistrée pour audit ultérieur, garantissant la conformité et permettant d'évaluer l'efficacité du processus décisionnel.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why this form -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        Pourquoi ce formulaire et comment collaborer avec nous
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.7;">
+                        Ce formulaire est conçu selon nos principes d'infrastructure de décision responsable. Il vise à recueillir des informations complètes et claires pour passer d'une idée ou d'une donnée brute à une <strong>décision éclairée, traçable et évaluée</strong>. Voici comment se déroule notre processus de collaboration :
+                    </p>
+
+                    <div class="process-timeline">
+                        <div class="process-step">
+                            <h4>1. Soumission de votre demande</h4>
+                            <p>Vous complétez ce formulaire en décrivant votre projet, vos besoins en indicateurs et le niveau d'accompagnement souhaité.</p>
+                        </div>
+                        <div class="process-step">
+                            <h4>2. Analyse de faisabilité</h4>
+                            <p>Notre équipe évalue la faisabilité de votre projet, sa pertinence stratégique et les ressources nécessaires (données, expertise, outils).</p>
+                        </div>
+                        <div class="process-step">
+                            <h4>3. Proposition d'accompagnement</h4>
+                            <p>Nous vous revenons avec une proposition adaptée : accès à la plateforme, méthodologie suggérée, plan de travail et niveau d'implication d'Apexmachina.</p>
+                        </div>
+                        <div class="process-step">
+                            <h4>4. Réalisation et suivi</h4>
+                            <p>Selon le niveau d'accompagnement choisi, nous travaillons ensemble à la réalisation de votre projet avec des points de suivi réguliers.</p>
+                        </div>
+                        <div class="process-step">
+                            <h4>5. Évaluation des impacts</h4>
+                            <p>Conformément à notre principe d'évaluabilité, nous mesurons les résultats et l'impact réel des décisions prises grâce au projet.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 1.5rem; margin-bottom: 0;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <p><strong>Délai de réponse :</strong> Notre équipe s'engage à accuser réception de votre demande et à proposer un retour initial dans les quelques jours ouvrables suivant la soumission.</p>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Définir mon projet
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 3: Project Definition -->
+            <section class="form-section" data-section="3">
+                <div class="section-header">
+                    <h2>Définition du projet</h2>
+                    <p>Décrivez précisément votre projet ou question d'analyse pour nous permettre d'évaluer sa faisabilité.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        Informations du projet
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label for="titleShort">Titre court <span class="required">*</span></label>
+                            <input type="text" id="titleShort" placeholder="Ex: Projet Équité" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="titleLong">Titre long</label>
+                            <input type="text" id="titleLong" placeholder="Ex: Disparités territoriales de santé au Québec">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issue">Enjeu ou problème à résoudre <span class="required">*</span></label>
+                        <p class="label-hint">Quel est le problème de santé ou de gestion identifié? Quelle question spécifique souhaitez-vous éclairer?</p>
+                        <textarea id="issue" placeholder="Ex: Taux élevé de diabète dans la région de l'Estrie, Augmentation des réadmissions dans mon service chirurgical..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="objective">Objectif de l'analyse <span class="required">*</span></label>
+                        <p class="label-hint">Quel résultat ou décision attendue? S'agit-il de comprendre des facteurs, cibler une intervention, évaluer un programme?</p>
+                        <textarea id="objective" placeholder="Ex: Identifier les déterminants territoriaux du diabète pour orienter la prévention..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="context">Contexte et portée</label>
+                        <p class="label-hint">Zone géographique, échelle temporelle, cadre institutionnel ou réglementaire</p>
+                        <textarea id="context" placeholder="Ex: Projet mené dans le cadre d'une initiative du MSSS, couvrant la région de la Montérégie sur la période 2020-2024..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                        Publication (optionnel)
+                    </div>
+
+                    <div class="form-group">
+                        <label for="citation">Citation</label>
+                        <input type="text" id="citation" placeholder="Ex: Echevin, D. (2025). Anatomie de l'offre médicale...">
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label for="doi">DOI</label>
+                            <input type="url" id="doi" placeholder="https://doi.org/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="projectUrl">URL du projet</label>
+                            <input type="url" id="projectUrl" placeholder="https://apexmachina.com/...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 4: Indicators Selection -->
+            <section class="form-section" data-section="4">
+                <div class="section-header">
+                    <h2>Sélection des indicateurs</h2>
+                    <p>Sélectionnez les indicateurs disponibles dans la banque GeoSanté.ai pour votre analyse.</p>
+                </div>
+
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="indicatorSearch" placeholder="Rechercher un indicateur..." oninput="filterIndicators(this.value)">
+                </div>
+
+                <div class="form-card">
+                    <!-- Cost and Performance -->
+                    <div class="indicator-category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <h4>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                                Coût et performance
+                            </h4>
+                            <span class="count">0 sélectionné(s)</span>
+                            <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <div class="indicator-grid">
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="nombre_patients" onchange="updateCount(this)"><span>Nombre de patients</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="couts_hospitalisation" onchange="updateCount(this)"><span>Coûts d'hospitalisation</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="duree_sejour" onchange="updateCount(this)"><span>Durée de séjour</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="readmission_30j" onchange="updateCount(this)"><span>Réadmission 30 jours</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="deces_annee" onchange="updateCount(this)"><span>Décès dans l'année</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="cout_actes" onchange="updateCount(this)"><span>Coût des actes facturés</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="nb_actes_omni" onchange="updateCount(this)"><span>Nombre d'actes omnipraticiens</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="couts_omni" onchange="updateCount(this)"><span>Coûts facturés omnipraticiens</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="visites_specialistes" onchange="updateCount(this)"><span>Nombre visites spécialistes</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="montant_specialistes" onchange="updateCount(this)"><span>Montant facturé spécialistes</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="nb_chirurgies" onchange="updateCount(this)"><span>Nombre de chirurgies</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="cout_medicaments" onchange="updateCount(this)"><span>Coûts médicaments</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="deces_hopital" onchange="updateCount(this)"><span>Décès à l'hôpital</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="cout_total" onchange="updateCount(this)"><span>Coût total</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patientèle -->
+                    <div class="indicator-category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <h4>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                Patientèle
+                            </h4>
+                            <span class="count">0 sélectionné(s)</span>
+                            <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <div class="indicator-grid">
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="indice_charlson" onchange="updateCount(this)"><span>Indice de Charlson</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="age" onchange="updateCount(this)"><span>Âge</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="nb_hospitalises" onchange="updateCount(this)"><span>Nombre de patients hospitalisés</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="faible_revenu" onchange="updateCount(this)"><span>Nombre d'assurés à faible revenu</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="jours_soins_intensifs" onchange="updateCount(this)"><span>Nombre de jours en soins intensifs</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="indice_patientele" onchange="updateCount(this)"><span>Indice de patientèle</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="indice_hhi" onchange="updateCount(this)"><span>Indice HHI</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="hospitalisations_evitables" onchange="updateCount(this)"><span>Hospitalisations évitables</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="taux_hospitalisation" onchange="updateCount(this)"><span>Taux d'hospitalisation</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="taux_mortalite" onchange="updateCount(this)"><span>Taux de mortalité pondéré</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Classifications diagnostiques -->
+                    <div class="indicator-category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <h4>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                                </svg>
+                                Classifications diagnostiques
+                            </h4>
+                            <span class="count">0 sélectionné(s)</span>
+                            <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <div class="indicator-grid">
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_infectieuses" onchange="updateCount(this)"><span>Maladies infectieuses et parasitaires</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="cancers" onchange="updateCount(this)"><span>Cancers et néoplasmes</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_endocriniennes" onchange="updateCount(this)"><span>Maladies endocriniennes</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_sang" onchange="updateCount(this)"><span>Maladies du sang</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="troubles_mentaux" onchange="updateCount(this)"><span>Troubles mentaux</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_systeme_nerveux" onchange="updateCount(this)"><span>Maladies du système nerveux</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_circulatoire" onchange="updateCount(this)"><span>Maladies de l'appareil circulatoire</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_respiratoire" onchange="updateCount(this)"><span>Maladies de l'appareil respiratoire</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_digestif" onchange="updateCount(this)"><span>Maladies de l'appareil digestif</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="maladies_genitourinaires" onchange="updateCount(this)"><span>Maladies des organes génitourinaires</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accès aux services -->
+                    <div class="indicator-category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <h4>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                Accès aux services de santé
+                            </h4>
+                            <span class="count">0 sélectionné(s)</span>
+                            <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <div class="indicator-grid">
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="distance_clsc" onchange="updateCount(this)"><span>Distance CLSC</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="distance_chsld" onchange="updateCount(this)"><span>Distance CHSLD</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="distance_hopital" onchange="updateCount(this)"><span>Distance hôpital</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="patients_omni" onchange="updateCount(this)"><span>Patients ayant consulté un omnipraticien</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="patients_specialiste" onchange="updateCount(this)"><span>Patients ayant consulté un spécialiste</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="concentration_omni" onchange="updateCount(this)"><span>Indice de concentration omnipraticiens</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Socio-économique -->
+                    <div class="indicator-category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <h4>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 3v18h18"/>
+                                    <path d="M18 17V9"/>
+                                    <path d="M13 17V5"/>
+                                    <path d="M8 17v-3"/>
+                                </svg>
+                                Socio-économique
+                            </h4>
+                            <span class="count">0 sélectionné(s)</span>
+                            <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <div class="indicator-grid">
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="age_median" onchange="updateCount(this)"><span>Âge médian</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="langues_non_officielles" onchange="updateCount(this)"><span>Langues non officielles</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="revenu_moyen" onchange="updateCount(this)"><span>Revenu moyen</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="immigrants" onchange="updateCount(this)"><span>Immigrants</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="autochtones" onchange="updateCount(this)"><span>Autochtones</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="minorites_visibles" onchange="updateCount(this)"><span>Minorités visibles</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="scolarite" onchange="updateCount(this)"><span>Scolarité</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Géospatiale -->
+                    <div class="indicator-category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <h4>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                                Géospatiale et environnement
+                            </h4>
+                            <span class="count">0 sélectionné(s)</span>
+                            <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <div class="indicator-grid">
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="terres_urbaines" onchange="updateCount(this)"><span>Terres urbaines</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="vegetation" onchange="updateCount(this)"><span>Végétation basse</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="surface_nue" onchange="updateCount(this)"><span>Surface nue</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="terres_forestieres" onchange="updateCount(this)"><span>Terres forestières</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="pm25" onchange="updateCount(this)"><span>PM2.5</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="no2" onchange="updateCount(this)"><span>NO2</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="temperature" onchange="updateCount(this)"><span>Température</span></label>
+                                <label class="indicator-item"><input type="checkbox" name="indicators" value="population_totale" onchange="updateCount(this)"><span>Population totale</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="selectedIndicators" class="selected-tags" style="display: none;"></div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 5: Missing Indicators -->
+            <section class="form-section" data-section="5">
+                <div class="section-header">
+                    <h2>Indicateurs manquants ou supplémentaires</h2>
+                    <p>Listez les données ou indicateurs non disponibles dans GeoSanté.ai que vous souhaiteriez intégrer.</p>
+                </div>
+
+                <div class="info-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                    <p>Cette étape permet d'identifier tous les éléments pertinents à votre problématique, même au-delà des données existantes. Elle s'aligne sur notre principe de transparence : expliciter ce qui est disponible ou non.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        Indicateurs additionnels souhaités
+                    </div>
+
+                    <div class="form-group">
+                        <label for="missingIndicators">Description des indicateurs manquants</label>
+                        <p class="label-hint">Décrivez les indicateurs spécifiques dont vous auriez besoin pour votre analyse</p>
+                        <textarea id="missingIndicators" placeholder="Ex: Taux de complications post-opératoires pour la chirurgie cardiaque, Indice de masse corporelle moyen par quartier, Données d'enquête sur l'activité physique..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataAvailability">Disponibilité des données</label>
+                        <p class="label-hint">Précisez si vous disposez des données ou si vous sollicitez l'équipe pour les trouver</p>
+                        <textarea id="dataAvailability" placeholder="Ex: Données disponibles dans le rapport X du ministère, Je peux fournir un fichier CSV des résultats d'une enquête locale..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Priorité des indicateurs</label>
+                        <select id="priority">
+                            <option value="">Sélectionnez le niveau de priorité</option>
+                            <option value="critique">Critique – Indispensable au projet</option>
+                            <option value="important">Important – Fortement souhaité</option>
+                            <option value="optionnel">Optionnel – Serait un plus</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 6: Support Level -->
+            <section class="form-section" data-section="6">
+                <div class="section-header">
+                    <h2>Niveau d'accompagnement souhaité</h2>
+                    <p>Choisissez le niveau de support adapté à vos besoins et ressources.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="support-grid">
+                        <label class="support-card" onclick="selectOption(this, 'support')">
+                            <input type="radio" name="support" value="niveau1">
+                            <span class="support-badge">Gratuit</span>
+                            <h4>Niveau 1 – Support minimal</h4>
+                            <p>Accompagnement léger, conseils de base, accès encadré à la plateforme. Idéal pour les projets académiques d'intérêt stratégique pour Apexmachina.</p>
+                        </label>
+                        <label class="support-card" onclick="selectOption(this, 'support')">
+                            <input type="radio" name="support" value="niveau2">
+                            <span class="support-badge">Standard</span>
+                            <h4>Niveau 2 – Accompagnement guidé</h4>
+                            <p>Support actif : méthodologie, configuration des analyses, réunions de suivi régulières, validation des résultats. Formule recommandée.</p>
+                        </label>
+                        <label class="support-card" onclick="selectOption(this, 'support')">
+                            <input type="radio" name="support" value="niveau3">
+                            <span class="support-badge">Sur mesure</span>
+                            <h4>Niveau 3 – Co-construction</h4>
+                            <p>Développement conjoint d'un module personnalisé, analyses avancées, partenariat étroit avec l'équipe Apexmachina pour un outil décisionnel inédit.</p>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Justification (optionnel)
+                    </div>
+                    <div class="form-group">
+                        <label for="supportReason">Pourquoi ce niveau d'accompagnement?</label>
+                        <textarea id="supportReason" placeholder="Expliquez brièvement pourquoi vous avez choisi ce niveau et vos attentes spécifiques..."></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 7: Contact -->
+            <section class="form-section" data-section="7">
+                <div class="section-header">
+                    <h2>Modalités de contact</h2>
+                    <p>Fournissez vos coordonnées et précisez vos attentes en termes de suivi.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Informations de contact
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label for="firstName">Prénom <span class="required">*</span></label>
+                            <input type="text" id="firstName" required placeholder="Votre prénom">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Nom <span class="required">*</span></label>
+                            <input type="text" id="lastName" required placeholder="Votre nom">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="position">Fonction / Poste</label>
+                        <input type="text" id="position" placeholder="Ex: Professeur adjoint, Directeur des opérations">
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label for="email">Courriel <span class="required">*</span></label>
+                            <input type="email" id="email" required placeholder="vous@exemple.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Téléphone</label>
+                            <input type="tel" id="phone" placeholder="(555) 123-4567">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Préférences et échéances
+                    </div>
+
+                    <div class="form-group">
+                        <label>Préférence de contact</label>
+                        <div class="option-grid cols-2">
+                            <label class="option-card checkbox" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" name="contactPref" value="email">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Courriel</h4>
+                                        <p>Communication par email</p>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" name="contactPref" value="phone">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Téléphone</h4>
+                                        <p>Appel téléphonique</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label for="deadline">Échéance particulière</label>
+                            <input type="date" id="deadline">
+                        </div>
+                        <div class="form-group">
+                            <label for="deliverable">Type de retour attendu</label>
+                            <select id="deliverable">
+                                <option value="">Sélectionnez...</option>
+                                <option value="rencontre">Rencontre (visioconférence)</option>
+                                <option value="proposition">Proposition écrite / devis</option>
+                                <option value="rapport">Rapport d'analyse</option>
+                                <option value="dashboard">Tableau de bord interactif</option>
+                                <option value="poc">Preuve de concept</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalNotes">Notes additionnelles</label>
+                        <textarea id="additionalNotes" placeholder="Toute information complémentaire que vous souhaitez partager..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="form-card">
+                    <div class="form-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"/>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                        Résumé de votre demande
+                    </div>
+
+                    <div class="summary-section">
+                        <h4>Profil</h4>
+                        <div class="summary-item">
+                            <span class="summary-label">Type de profil</span>
+                            <span class="summary-value" id="summaryProfile">Non spécifié</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Organisation</span>
+                            <span class="summary-value" id="summaryOrg">Non spécifiée</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-section">
+                        <h4>Projet</h4>
+                        <div class="summary-item">
+                            <span class="summary-label">Titre</span>
+                            <span class="summary-value" id="summaryTitle">Non spécifié</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Indicateurs sélectionnés</span>
+                            <span class="summary-value" id="summaryIndicators">0</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-section">
+                        <h4>Accompagnement</h4>
+                        <div class="summary-item">
+                            <span class="summary-label">Niveau choisi</span>
+                            <span class="summary-value" id="summarySupport">Non spécifié</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="submit" class="btn btn-accent">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13"/>
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                        Soumettre la demande
+                    </button>
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>Demande soumise avec succès!</span>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 7;
+
+        function updateProgress() {
+            const progressLine = document.getElementById('progressLine');
+            const steps = document.querySelectorAll('.step');
+            const progress = ((currentSection - 1) / (totalSections - 1)) * 100;
+            progressLine.style.width = `${progress}%`;
+
+            steps.forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                if (stepNum === currentSection) {
+                    step.classList.add('active');
+                } else if (stepNum < currentSection) {
+                    step.classList.add('completed');
+                }
+            });
+        }
+
+        function showSection(sectionNum) {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionNum}"]`).classList.add('active');
+            currentSection = sectionNum;
+            updateProgress();
+            updateSummary();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                showSection(currentSection + 1);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 1) {
+                showSection(currentSection - 1);
+            }
+        }
+
+        // Step click navigation
+        document.querySelectorAll('.step').forEach(step => {
+            step.addEventListener('click', () => {
+                const stepNum = parseInt(step.dataset.step);
+                if (stepNum <= currentSection || stepNum === currentSection + 1) {
+                    showSection(stepNum);
+                }
+            });
+        });
+
+        function selectOption(element, groupName) {
+            const parent = element.closest('.option-grid, .support-grid');
+            parent.querySelectorAll('.option-card, .support-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+
+        function toggleCheckbox(element) {
+            const input = element.querySelector('input');
+            input.checked = !input.checked;
+            element.classList.toggle('selected', input.checked);
+        }
+
+        function toggleCategory(header) {
+            header.classList.toggle('open');
+            const content = header.nextElementSibling;
+            content.classList.toggle('open');
+        }
+
+        function updateCount(checkbox) {
+            const category = checkbox.closest('.indicator-category');
+            const count = category.querySelectorAll('input:checked').length;
+            category.querySelector('.count').textContent = `${count} sélectionné(s)`;
+            updateSelectedTags();
+        }
+
+        function updateSelectedTags() {
+            const container = document.getElementById('selectedIndicators');
+            const checked = document.querySelectorAll('input[name="indicators"]:checked');
+            
+            if (checked.length > 0) {
+                container.style.display = 'flex';
+                container.innerHTML = '';
+                checked.forEach(input => {
+                    const label = input.closest('.indicator-item').querySelector('span').textContent;
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.innerHTML = `${label}<button onclick="removeTag('${input.value}')" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+                    container.appendChild(tag);
+                });
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function removeTag(value) {
+            const checkbox = document.querySelector(`input[value="${value}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+                updateCount(checkbox);
+            }
+        }
+
+        function filterIndicators(query) {
+            const items = document.querySelectorAll('.indicator-item');
+            const lowerQuery = query.toLowerCase();
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(lowerQuery) ? 'flex' : 'none';
+            });
+
+            // Auto-open categories with matching items
+            if (query.length > 0) {
+                document.querySelectorAll('.indicator-category').forEach(cat => {
+                    const visibleItems = cat.querySelectorAll('.indicator-item[style="display: flex;"], .indicator-item:not([style])');
+                    const hasVisible = Array.from(visibleItems).some(item => item.style.display !== 'none');
+                    if (hasVisible) {
+                        cat.querySelector('.category-header').classList.add('open');
+                        cat.querySelector('.category-content').classList.add('open');
+                    }
+                });
+            }
+        }
+
+        function updateSummary() {
+            // Profile
+            const profileRadio = document.querySelector('input[name="profile"]:checked');
+            const profileLabels = {
+                'etudiant': 'Étudiant',
+                'chercheur': 'Chercheur en santé publique',
+                'clinicien': 'Clinicien',
+                'gestionnaire': 'Gestionnaire',
+                'industrie': 'Industrie pharmaceutique',
+                'actuaire': 'Actuaire / Économiste'
+            };
+            document.getElementById('summaryProfile').textContent = profileRadio ? profileLabels[profileRadio.value] : 'Non spécifié';
+            
+            // Organization
+            const org = document.getElementById('organization').value;
+            document.getElementById('summaryOrg').textContent = org || 'Non spécifiée';
+            
+            // Title
+            const title = document.getElementById('titleShort').value;
+            document.getElementById('summaryTitle').textContent = title || 'Non spécifié';
+            
+            // Indicators count
+            const indicatorCount = document.querySelectorAll('input[name="indicators"]:checked').length;
+            document.getElementById('summaryIndicators').textContent = indicatorCount;
+            
+            // Support level
+            const supportRadio = document.querySelector('input[name="support"]:checked');
+            const supportLabels = {
+                'niveau1': 'Niveau 1 – Support minimal',
+                'niveau2': 'Niveau 2 – Accompagnement guidé',
+                'niveau3': 'Niveau 3 – Co-construction'
+            };
+            document.getElementById('summarySupport').textContent = supportRadio ? supportLabels[supportRadio.value] : 'Non spécifié';
+        }
+
+        // Form submission
+        document.getElementById('geoSanteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        });
+
+        // Input change listeners for summary
+        document.getElementById('organization').addEventListener('input', updateSummary);
+        document.getElementById('titleShort').addEventListener('input', updateSummary);
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

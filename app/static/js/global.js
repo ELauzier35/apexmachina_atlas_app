@@ -73,6 +73,42 @@ export const COH_CODE_TO_NAME_DICT = {
     '22': '2002-2006',
     '23': '2007-2011'
 };
+export const DISPERSION_INDICATORS = [
+    "tauxmort",
+    "taux_hosp",
+    "readm30jour",
+    "nbacte_visite",
+    "visiteomni",
+    "couttotal",
+    "montant_pharma",
+    "charlson_annuel",
+    "age",
+    "sexe",
+    "revenu_moyen",
+    "scolarite_moy",
+    "pourc_immigrants",
+    "pourc_identite_autochtone",
+    "pourc_minorite_vis",
+    "vegetation_basse",
+    "urbain",
+    "surface_nue",
+    "forestier",
+    "eau",
+    "agricole",
+    "dist_clsc",
+    "dist_chsld",
+    "dist_hopital",
+    "densite_route",
+    "tempmax",
+    "tempmin",
+    "temperature",
+    "SO2",
+    "PM25",
+    "O3",
+    "NO2",
+    "NO",
+    "CO"
+]
 
 
 export const IRS_DEFAULTS = {

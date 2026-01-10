@@ -27,7 +27,7 @@ function initProjectSidePanel(project_object){
     $('#prj-short-title').html(project_object['short-title']);
     $('#prj-short-title').removeClass();
     $('#prj-short-title').addClass('prj-badge');
-    $('#prj-short-title').addClass(project_object['badge-type']);
+    $('#prj-short-title').addClass(`text-${project_object['badge-color']}-500 border !border-${project_object['badge-color']}-600`);
     $('#prj-long-title').html(project_object['long-title']);
     $('#prj-long-description').html(project_object['long-description']);
     $('#prj-citation').html(`
@@ -42,7 +42,7 @@ export function initProjectList(){
         let project_div = `
             <div class="project-box">
                 <div class="ind-top-row">
-                    <div class="ind-badge ${project_el['badge-type']}">${project_el['short-title']}</div>
+                    <div class="ind-badge text-${project_el['badge-color']}-500 border !border-${project_el['badge-color']}-600">${project_el['short-title']}</div>
                     <div class="you-are-here" data-id="${project_el['id']}">
                         <i class="fa-solid fa-location-dot"></i>
                         <span>Vous êtes ici</span>

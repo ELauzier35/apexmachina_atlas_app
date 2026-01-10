@@ -665,7 +665,7 @@ span.leg-sm-val {
     max-height: calc(100vh - 40px);
 }
 
-.rls-stats-grid{
+.rls-stats-grid, .dispersion-stats-grid{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem 3rem;
@@ -1569,7 +1569,7 @@ div.ol-zoom {
 }
 
 #basemap-preview {
-    background: url('../image/thumbnails/thumbnail_satLayer.JPG');
+    background: url('../image/thumbnails/thumbnail_satLayer.jpg');
     background-size: cover;
     width: 100%;
     height: 100%;
@@ -1690,7 +1690,7 @@ div.ol-zoom {
 
 .map-box[data-nav="dispersion"] {
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows: auto 1fr auto;
     gap: 16px;
     height: auto;
     max-height:calc(100% - 40px);
@@ -1944,6 +1944,7 @@ div.ol-zoom {
     flex-direction: column;
     gap: 36px;
     transition: width 700ms, min-width 700ms;
+    overflow: hidden;
 }
 
 .project-sp.open{
@@ -2133,7 +2134,8 @@ div.ol-zoom {
 }
 
 .tour-modal.large{
-    width:700px;
+    width:820px;
+    max-height:calc(100vh - 40px);
 }
 
 .tour-modal.active {
@@ -2330,7 +2332,7 @@ div.ol-zoom {
 }
 
 .tour-modal.nav {
-    top: 112px;
+    top: 20px;
     left: calc(88px + 20px);
     transform: translate(0, 0);
 }
@@ -2347,11 +2349,24 @@ div.ol-zoom {
 }
 
 
-.tour-modal::before {
+.tour-modal:not(.start)::before {
     content: '';
     position: absolute;
     left: -20px!important;
     top: 28px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid transparent;
+    border-right: 10px solid var(--light-text-3);
+}
+
+.tour-modal.nav::before {
+    content: '';
+    position: absolute;
+    left: -20px!important;
+    top: 124px;
     width: 0;
     height: 0;
     border-top: 10px solid transparent;

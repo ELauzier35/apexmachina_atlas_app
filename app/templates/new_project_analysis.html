@@ -1,0 +1,1054 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/new_proj_analysis.css') }}">
+<link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap"
+    rel="stylesheet">
+<script>
+    atlas_indicators = {{ atlas_indicators | tojson }}
+</script>
+{% endblock %}
+
+{% block content %}
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="{{ url_for('static', filename='image/logo/apex-machina-renv-fav.svg') }}" alt=""
+                    width="150px">
+            </div>
+            <span class="logo-text">Geo<span style="color:var(--accent)">Santé</span>.ai</span>
+        </div>
+        <h1>Demande d'analyse ou de projet</h1>
+        <p>Soumettez votre demande d'analyse territoriale ou de projet d'aide à la décision en santé.</p>
+    </div>
+</header>
+
+<nav class="progress-container">
+    <div class="progress-wrapper">
+        <div class="progress-steps">
+            <div class="progress-line" id="progressLine"></div>
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <span class="step-label">Profil</span>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <span class="step-label">Apexmachina</span>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <span class="step-label">Projet</span>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-number">3</div>
+                <span class="step-label">Indicateurs</span>
+            </div>
+            <div class="step" data-step="5">
+                <div class="step-number">5</div>
+                <span class="step-label">Compléments</span>
+            </div>
+            <div class="step" data-step="6">
+                <div class="step-number">6</div>
+                <span class="step-label">Support</span>
+            </div>
+            <div class="step" data-step="7">
+                <div class="step-number">7</div>
+                <span class="step-label">Contact</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="main-section">
+    <main class="form-container">
+        <form id="geoSanteForm" novalidate>
+            <!-- Section 1: Profile -->
+            <section class="form-section active" data-section="1">
+                <div class="section-header">
+                    <h2>Identification du profil utilisateur</h2>
+                    <p>Indiquez votre profil afin d'adapter la demande à votre contexte professionnel.</p>
+                </div>
+
+                <div class="info-box">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <p>Identifier votre profil permet à GeoSanté.ai de contextualiser votre demande et d'adapter le
+                        langage
+                        ainsi que les exemples pertinents à votre domaine d'expertise.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Votre rôle professionnel</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+
+                        <div class="option-grid">
+                            <label class="option-card" onclick="selectOption(this, 'profile')">
+                                <input type="radio" name="profile" value="etudiant">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Étudiant</h4>
+                                        <p>MSc/PhD en santé, data science ou domaine connexe</p>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="option-card" onclick="selectOption(this, 'profile')">
+                                <input type="radio" name="profile" value="chercheur">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Chercheur en santé publique</h4>
+                                        <p>Épidémiologie, santé communautaire, recherche universitaire</p>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="option-card" onclick="selectOption(this, 'profile')">
+                                <input type="radio" name="profile" value="clinicien">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Clinicien</h4>
+                                        <p>Médecin, infirmier(ère) ou professionnel de la santé</p>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="option-card" onclick="selectOption(this, 'profile')">
+                                <input type="radio" name="profile" value="gestionnaire">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Gestionnaire du système de santé</h4>
+                                        <p>Cadre MSSS, directeur d'établissement, DSP</p>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="option-card" onclick="selectOption(this, 'profile')">
+                                <input type="radio" name="profile" value="industrie">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Industrie pharmaceutique</h4>
+                                        <p>Accès au marché, responsable médical, affaires réglementaires</p>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="option-card" onclick="selectOption(this, 'profile')">
+                                <input type="radio" name="profile" value="actuaire">
+                                <div class="option-content">
+                                    <div class="option-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                    </div>
+                                    <div class="option-text">
+                                        <h4>Actuaire / Économiste de la santé</h4>
+                                        <p>Fédération médicale, assurance, analyse économique</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1.25rem;">
+                            <label for="profileOther">Autre rôle (préciser)</label>
+                            <input type="text" id="profileOther"
+                                placeholder="Ex: Consultant en transformation numérique">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="organization">Organisation <span class="required">*</span></label>
+                            <input type="text" id="organization"
+                                placeholder="Ex: Université de Sherbrooke, CIUSSS de l'Estrie" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 2: Apexmachina Presentation (NEW) -->
+            <section class="form-section" data-section="2">
+                <div class="section-header">
+                    <h2>Découvrez Apexmachina</h2>
+                    <p>Avant de définir votre projet, prenez un moment pour comprendre notre approche et comment nous pouvons vous accompagner.</p>
+                </div>
+
+                <!-- Hero Block -->
+                <div class="apex-hero">
+                    <div class="apex-hero-content">
+                        <h3>
+                            <div class="apex-logo-mini">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.5L17.5 8 12 11.5 6.5 8 12 4.5zM6 9.5l5 3v6l-5-3v-6zm7 9v-6l5-3v6l-5 3z"/>
+                                </svg>
+                            </div>
+                            Apexmachina
+                        </h3>
+                        <p class="tagline">Infrastructure de Décision Responsable</p>
+                        <p>Apexmachina est un bureau d'architecture de décision publique. Nous développons <strong>GeoSanté.ai</strong>, une plateforme d'analyses territoriales et d'aide à la décision en santé pour les acteurs du réseau québécois. Notre mission : combler le fossé entre la prédiction et l'action en structurant la décision de manière rigoureuse, transparente et évaluable.</p>
+                        
+                        <div class="external-links">
+                            <a href="https://apexmachina.com" target="_blank" class="external-link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                                Site web
+                            </a>
+                            <a href="https://geosante.ai" target="_blank" class="external-link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                                Plateforme GeoSanté.ai
+                            </a>
+                        </div>
+
+                        <div class="apex-stats">
+                            <div class="apex-stat">
+                                <div class="apex-stat-value">5</div>
+                                <div class="apex-stat-label">Principes fondamentaux</div>
+                            </div>
+                            <div class="apex-stat">
+                                <div class="apex-stat-value">2</div>
+                                <div class="apex-stat-label">Plateformes SaaS</div>
+                            </div>
+                            <div class="apex-stat">
+                                <div class="apex-stat-value">100+</div>
+                                <div class="apex-stat-label">Indicateurs santé</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 Principles -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Notre approche : 5 principes pour des décisions justes et efficaces</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="principles-grid">
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                        <polyline points="10 9 9 9 8 9"/>
+                                    </svg>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>1. Évaluabilité par conception</h4>
+                                    <p>Nous intégrons la mesure de l'effet causal réel dès la conception du projet. Cela implique de prévoir des groupes de contrôle et des méthodes d'évaluation rigoureuses pour mesurer l'impact réel des interventions.</p>
+                                </div>
+                            </div>
+
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                        <polyline points="22 4 12 14.01 9 11.01"/>
+                                    </svg>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>2. Modélisation des incitatifs</h4>
+                                    <p>Nous simulons et anticipons les comportements induits par les politiques pour éviter les effets pervers. Par exemple, simuler l'effet de changements tarifaires sur le comportement des professionnels de santé.</p>
+                                </div>
+                            </div>
+
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <circle cx="12" cy="12" r="6"/>
+                                        <circle cx="12" cy="12" r="2"/>
+                                    </svg>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>3. Ciblage décisionnel</h4>
+                                    <p>Nous privilégions les métriques orientées action – l'effet causal attendu τ(x) plutôt que le simple risque. L'objectif est d'allouer les ressources selon leur rendement marginal, là où elles auront le plus d'impact.</p>
+                                </div>
+                            </div>
+
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>4. Transparence des arbitrages</h4>
+                                    <p>Nous rendons explicites les compromis (efficience vs équité) et permettons au décideur de les ajuster. Chaque recommandation est accompagnée de ses facteurs contributifs et de sa justification.</p>
+                                </div>
+                            </div>
+
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>5. Indépendance et auditabilité</h4>
+                                    <p>Nous garantissons l'ouverture des données et méthodes via API et audits tiers. Aucun décideur n'est enfermé dans une « boîte noire » technologique – chaque décision est traçable et auditable.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quote-block">
+                            <p>« GeoImpact et GeoSanté ne produisent pas des réponses, ils produisent des questions mieux posées. »</p>
+                            <cite>— Philosophie Apexmachina</cite>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- What we can do -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-cube"></i>
+                            <span>Ce que nous pouvons faire pour vous</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="services-grid">
+                            <div class="service-card">
+                                <h4>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    Cartographie territoriale
+                                </h4>
+                                <p>Visualisez les risques, indicateurs et besoins par établissement, région ou profil de population pour une planification stratégique au niveau du réseau de santé.</p>
+                            </div>
+
+                            <div class="service-card">
+                                <h4>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="3" y1="9" x2="21" y2="9"/>
+                                        <line x1="9" y1="21" x2="9" y2="9"/>
+                                    </svg>
+                                    Simulateur de scénarios
+                                </h4>
+                                <p>Testez des hypothèses d'allocation de ressources : « Si j'ajoute 2 infirmières de liaison, combien de réadmissions pourrai-je éviter et où les affecter ? »</p>
+                            </div>
+
+                            <div class="service-card">
+                                <h4>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 20V10"/>
+                                        <path d="M12 20V4"/>
+                                        <path d="M6 20v-6"/>
+                                    </svg>
+                                    Tableau de bord temps réel
+                                </h4>
+                                <p>Suivez vos indicateurs de performance clés avec des alertes automatisées en cas de dépassement de seuils ou de situations critiques nécessitant une intervention.</p>
+                            </div>
+
+                            <div class="service-card">
+                                <h4>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 11l3 3L22 4"/>
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                    </svg>
+                                    Traçabilité et audit
+                                </h4>
+                                <p>Chaque décision et recommandation est enregistrée pour audit ultérieur, garantissant la conformité et permettant d'évaluer l'efficacité du processus décisionnel.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Why this form -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-circle-question"></i>
+                            <span>Pourquoi ce formulaire et comment collaborer avec nous</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.7;">
+                            Ce formulaire est conçu selon nos principes d'infrastructure de décision responsable. Il vise à recueillir des informations complètes et claires pour passer d'une idée ou d'une donnée brute à une <strong>décision éclairée, traçable et évaluée</strong>. Voici comment se déroule notre processus de collaboration :
+                        </p>
+
+                        <div class="process-timeline">
+                            <div class="process-step">
+                                <h4>1. Soumission de votre demande</h4>
+                                <p>Vous complétez ce formulaire en décrivant votre projet, vos besoins en indicateurs et le niveau d'accompagnement souhaité.</p>
+                            </div>
+                            <div class="process-step">
+                                <h4>2. Analyse de faisabilité</h4>
+                                <p>Notre équipe évalue la faisabilité de votre projet, sa pertinence stratégique et les ressources nécessaires (données, expertise, outils).</p>
+                            </div>
+                            <div class="process-step">
+                                <h4>3. Proposition d'accompagnement</h4>
+                                <p>Nous vous revenons avec une proposition adaptée : accès à la plateforme, méthodologie suggérée, plan de travail et niveau d'implication d'Apexmachina.</p>
+                            </div>
+                            <div class="process-step">
+                                <h4>4. Réalisation et suivi</h4>
+                                <p>Selon le niveau d'accompagnement choisi, nous travaillons ensemble à la réalisation de votre projet avec des points de suivi réguliers.</p>
+                            </div>
+                            <div class="process-step">
+                                <h4>5. Évaluation des impacts</h4>
+                                <p>Conformément à notre principe d'évaluabilité, nous mesurons les résultats et l'impact réel des décisions prises grâce au projet.</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 1.5rem; margin-bottom: 0;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <p><strong>Délai de réponse :</strong> Notre équipe s'engage à accuser réception de votre demande et à proposer un retour initial dans les quelques jours ouvrables suivant la soumission.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Définir mon projet
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 2: Project Definition -->
+            <section class="form-section" data-section="2">
+                <div class="section-header">
+                    <h2>Définition du projet</h2>
+                    <p>Décrivez précisément votre projet ou question d'analyse pour nous permettre d'évaluer sa
+                        faisabilité.
+                    </p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>Informations du projet</span>
+                        </div>
+                    </div>
+
+                    <div class="form-card-body">
+
+                        <div class="form-group">
+                            <label for="titleLong">Titre du projet <span class="required">*</span></label>
+                            <input type="text" id="titleLong"
+                                placeholder="Ex: Disparités territoriales de santé au Québec">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issue">Enjeu ou problème à résoudre <span class="required">*</span></label>
+                            <p class="label-hint">Quel est le problème de santé ou de gestion identifié? Quelle question
+                                spécifique souhaitez-vous éclairer?</p>
+                            <textarea id="issue"
+                                placeholder="Ex: Taux élevé de diabète dans la région de l'Estrie, Augmentation des réadmissions dans mon service chirurgical..."
+                                required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="objective">Objectif de l'analyse <span class="required">*</span></label>
+                            <p class="label-hint">Quel résultat ou décision attendue? S'agit-il de comprendre des
+                                facteurs,
+                                cibler une intervention, évaluer un programme?</p>
+                            <textarea id="objective"
+                                placeholder="Ex: Identifier les déterminants territoriaux du diabète pour orienter la prévention..."
+                                required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="context">Contexte et portée</label>
+                            <p class="label-hint">Zone géographique, échelle temporelle, cadre institutionnel ou
+                                réglementaire
+                            </p>
+                            <textarea id="context"
+                                placeholder="Ex: Projet mené dans le cadre d'une initiative du MSSS, couvrant la région de la Montérégie sur la période 2020-2024..."></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Publication (optionnel)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-card-body">
+                        <div class="form-group">
+                            <label for="citation">Citation</label>
+                            <input type="text" id="citation"
+                                placeholder="Ex: Echevin, D. (2025). Anatomie de l'offre médicale...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="doi">DOI</label>
+                            <input type="url" id="doi" placeholder="Ex: https://doi.org/...">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 3: Indicators Selection -->
+            <section class="form-section" data-section="3">
+                <div class="section-header">
+                    <h2>Sélection des indicateurs</h2>
+                    <p>Sélectionnez les indicateurs disponibles dans la banque GeoSanté.ai pour votre analyse.</p>
+                </div>
+
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    <input type="text" id="indicatorSearch" placeholder="Rechercher un indicateur..."
+                        oninput="filterIndicators(this.value)">
+                </div>
+
+                <div class="form-card">
+
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>Indicateurs du projet</span>
+                        </div>
+                    </div>
+
+                    <div class="form-card-body flex-col">
+
+                        <!-- Cost and Performance -->
+                        <div class="indicator-category">
+                            <div class="category-header" onclick="toggleCategory(this)">
+                                <div class="cat-header-flex">
+                                    <h4>
+                                        <i class="fa-solid fa-dollar-sign"></i>
+                                        Coût et performance
+                                    </h4>
+                                    <span class="count">0 sélectionné(s)</span>
+                                </div>
+                                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </div>
+                            <div class="category-content">
+                                <div class="indicator-flex" id="indicatorCost">
+                                    <!-- Dynamicaly generated via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Patientèle -->
+                        <div class="indicator-category">
+                            <div class="category-header" onclick="toggleCategory(this)">
+                                <div class="cat-header-flex">
+                                    <h4>
+                                        <i class="fa-solid fa-users"></i>
+                                        Patientèle
+                                    </h4>
+                                    <span class="count">0 sélectionné(s)</span>
+                                </div>
+                                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </div>
+                            <div class="category-content">
+                                <div class="indicator-flex" id="indicatorPatient">
+                                    <!-- Dynamicaly generated via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Accès aux services -->
+                        <div class="indicator-category">
+                            <div class="category-header" onclick="toggleCategory(this)">
+                                <div class="cat-header-flex">
+                                    <h4>
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        Accès aux services de santé
+                                    </h4>
+                                    <span class="count">0 sélectionné(s)</span>
+                                </div>
+                                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </div>
+                            <div class="category-content">
+                                <div class="indicator-flex" id="indicatorAccess">
+                                    <!-- Dynamicaly generated via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Socio-économique -->
+                        <div class="indicator-category">
+                            <div class="category-header" onclick="toggleCategory(this)">
+                                <div class="cat-header-flex">
+                                    <h4>
+                                        <i class="fa-solid fa-chart-column"></i>
+                                        Socio-économique
+                                    </h4>
+                                    <span class="count">0 sélectionné(s)</span>
+                                </div>
+                                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </div>
+                            <div class="category-content">
+                                <div class="indicator-flex" id="indicatorSocio">
+                                    <!-- Dynamicaly generated via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Géospatiale -->
+                        <div class="indicator-category">
+                            <div class="category-header" onclick="toggleCategory(this)">
+                                <div class="cat-header-flex">
+                                    <h4>
+                                        <i class="fa-solid fa-satellite"></i>
+                                        Géospatiale et environnement
+                                    </h4>
+                                    <span class="count">0 sélectionné(s)</span>
+                                </div>
+                                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </div>
+                            <div class="category-content">
+                                <div class="indicator-flex" id="indicatorGeospatial">
+                                    <!-- Dynamicaly generated via JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="selectedIndicators" class="selected-tags" style="display: none;"></div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 4: Missing Indicators -->
+            <section class="form-section" data-section="4">
+                <div class="section-header">
+                    <h2>Indicateurs manquants ou supplémentaires</h2>
+                    <p>Listez les données ou indicateurs non disponibles dans GeoSanté.ai que vous souhaiteriez
+                        intégrer.
+                    </p>
+                </div>
+
+                <div class="info-box">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <p>Cette étape permet d'identifier tous les éléments pertinents à votre problématique, même au-delà
+                        des
+                        données existantes. Elle s'aligne sur le principe de transparence : expliciter ce qui est
+                        disponible
+                        ou non.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <span>Indicateurs additionnels souhaités</span>
+                        </div>
+                    </div>
+
+                    <div class="form-card-body">
+                        <div class="form-group">
+                            <label for="missingIndicators">Description des indicateurs manquants</label>
+                            <p class="label-hint">Décrivez les indicateurs spécifiques dont vous auriez besoin pour
+                                votre
+                                analyse</p>
+                            <textarea id="missingIndicators"
+                                placeholder="Ex: Taux de complications post-opératoires pour la chirurgie cardiaque, Indice de masse corporelle moyen par quartier, Données d'enquête sur l'activité physique..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dataAvailability">Disponibilité des données</label>
+                            <p class="label-hint">Précisez si vous disposez des données ou si vous sollicitez l'équipe
+                                pour les
+                                trouver</p>
+                            <textarea id="dataAvailability"
+                                placeholder="Ex: Données disponibles dans le rapport X du ministère, Je peux fournir un fichier CSV des résultats d'une enquête locale..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="priority">Priorité des indicateurs</label>
+                            <select id="priority">
+                                <option value="">Sélectionnez le niveau de priorité</option>
+                                <option value="critique">Critique – Indispensable au projet</option>
+                                <option value="important">Important – Fortement souhaité</option>
+                                <option value="optionnel">Optionnel – Serait un plus</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 5: Support Level -->
+            <section class="form-section" data-section="5">
+                <div class="section-header">
+                    <h2>Niveau d'accompagnement souhaité</h2>
+                    <p>Choisissez le niveau de support adapté à vos besoins et ressources.</p>
+                </div>
+
+                <div class="form-card complete-pad">
+                    <div class="support-grid">
+                        <label class="support-card" onclick="selectOption(this, 'support')">
+                            <input type="radio" name="support" value="niveau1">
+                            <span class="support-badge">Gratuit</span>
+                            <h4>Niveau 1 – Support minimal</h4>
+                            <p>Accompagnement léger, conseils de base, accès encadré à la plateforme. Idéal pour les
+                                projets
+                                académiques d'intérêt stratégique.</p>
+                        </label>
+                        <label class="support-card" onclick="selectOption(this, 'support')">
+                            <input type="radio" name="support" value="niveau2">
+                            <span class="support-badge">Standard</span>
+                            <h4>Niveau 2 – Accompagnement guidé</h4>
+                            <p>Support actif : méthodologie, configuration des analyses, réunions de suivi, validation
+                                des
+                                résultats. Formule recommandée.</p>
+                        </label>
+                        <label class="support-card" onclick="selectOption(this, 'support')">
+                            <input type="radio" name="support" value="niveau3">
+                            <span class="support-badge">Sur mesure</span>
+                            <h4>Niveau 3 – Co-construction</h4>
+                            <p>Développement conjoint d'un module personnalisé, analyses avancées, partenariat étroit
+                                avec
+                                l'équipe Apexmachina.</p>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-message"></i>
+                            <span>Justification (optionnel)</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="form-group">
+                            <label for="supportReason">Pourquoi ce niveau d'accompagnement?</label>
+                            <textarea id="supportReason"
+                                placeholder="Expliquez brièvement pourquoi vous avez choisi ce niveau et vos attentes spécifiques..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">
+                        Continuer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Section 6: Contact -->
+            <section class="form-section" data-section="6">
+                <div class="section-header">
+                    <h2>Modalités de contact</h2>
+                    <p>Fournissez vos coordonnées et précisez vos attentes en termes de suivi.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Informations de contact</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+
+                        <div class="two-col">
+                            <div class="form-group">
+                                <label for="firstName">Prénom <span class="required">*</span></label>
+                                <input type="text" id="firstName" required placeholder="Votre prénom">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Nom <span class="required">*</span></label>
+                                <input type="text" id="lastName" required placeholder="Votre nom">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="position">Fonction / Poste</label>
+                            <input type="text" id="position"
+                                placeholder="Ex: Professeur adjoint, Directeur des opérations">
+                        </div>
+
+                        <div class="two-col">
+                            <div class="form-group no-mrb">
+                                <label for="email">Courriel <span class="required">*</span></label>
+                                <input type="email" id="email" required placeholder="vous@exemple.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Téléphone</label>
+                                <input type="tel" id="phone" placeholder="(555) 123-4567">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <span>Préférences et échéances</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="form-group">
+                            <label>Préférence de contact</label>
+                            <div class="option-grid cols-2">
+                                <label class="option-card checkbox" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="contactPref" value="email">
+                                    <div class="option-content">
+                                        <div class="option-check">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                <polyline points="20 6 9 17 4 12" />
+                                            </svg>
+                                        </div>
+                                        <div class="option-text">
+                                            <h4>Courriel</h4>
+                                            <p>Communication par email</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="option-card checkbox" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="contactPref" value="phone">
+                                    <div class="option-content">
+                                        <div class="option-check">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                <polyline points="20 6 9 17 4 12" />
+                                            </svg>
+                                        </div>
+                                        <div class="option-text">
+                                            <h4>Téléphone</h4>
+                                            <p>Appel téléphonique</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="two-col">
+                            <div class="form-group">
+                                <label for="deadline">Échéance particulière</label>
+                                <input type="date" id="deadline">
+                            </div>
+                            <div class="form-group">
+                                <label for="deliverable">Type de retour attendu</label>
+                                <select id="deliverable">
+                                    <option value="">Sélectionnez...</option>
+                                    <option value="rencontre">Rencontre (visioconférence)</option>
+                                    <option value="proposition">Proposition écrite / devis</option>
+                                    <option value="rapport">Rapport d'analyse</option>
+                                    <option value="dashboard">Tableau de bord interactif</option>
+                                    <option value="poc">Preuve de concept</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="additionalNotes">Notes additionnelles</label>
+                            <textarea id="additionalNotes"
+                                placeholder="Toute information complémentaire que vous souhaitez partager..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            <span>Résumé de votre demande</span>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="summary-section">
+                            <h4>Profil</h4>
+                            <div class="summary-item">
+                                <span class="summary-label">Type de profil</span>
+                                <span class="summary-value" id="summaryProfile">Non spécifié</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Organisation</span>
+                                <span class="summary-value" id="summaryOrg">Non spécifiée</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <h4>Projet</h4>
+                            <div class="summary-item">
+                                <span class="summary-label">Titre</span>
+                                <span class="summary-value" id="summaryTitle">Non spécifié</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Indicateurs sélectionnés</span>
+                                <span class="summary-value" id="summaryIndicators">0</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <h4>Accompagnement</h4>
+                            <div class="summary-item">
+                                <span class="summary-label">Niveau choisi</span>
+                                <span class="summary-value" id="summarySupport">Non spécifié</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Retour
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13" />
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+                        </svg>
+                        Soumettre la demande
+                    </button>
+                </div>
+            </section>
+        </form>
+    </main>
+</div>
+
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+    <span>Demande soumise avec succès!</span>
+</div>
+{% endblock %}
+{% block js %}
+<script src="{{ url_for('static', filename='js/new_proj_analysis.js') }}"></script>
+{% endblock %}

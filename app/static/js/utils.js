@@ -56,6 +56,9 @@ export function getNameWithYear(key) {
     }
     return name;
 }
+export function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 const key = 'pk.eyJ1IjoiZXRpZW5uZWxhdXppZXIiLCJhIjoiY2t3YmViMGt3MnJwZzJ1bXAzb2pxemw3eiJ9.at1eB1bjMUzZvOx9FvzCDA'
 export function pearsonCorrelation(prefs, p1, p2) {

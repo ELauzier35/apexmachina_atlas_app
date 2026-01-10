@@ -50,8 +50,8 @@ const MAIN_TOUR = {
         "icon": "<i class='fa-solid fa-compass'></i>",
         "large": false,
         "title": "Bienvenue sur GeoSanté",
-        "content": `Cette courte visite guidée vous aidera à prendre en main GeoSanté. 
-            Découvrez les outils mis à votre disposition pour explorer, comprendre et analyser les données de santé du Québec.`,
+        "content": `Cette courte visite guidée vous aidera à prendre en main GeoSanté. Elle présente les principaux outils de la plateforme 
+        et leur fonctionnement afin de vous aider à explorer, comparer et analyser les données de santé du Québec.`,
         "content-justify": false,
         "position": "start",
         "highlight": null,
@@ -63,8 +63,8 @@ const MAIN_TOUR = {
         "icon": "<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-mouse-pointer-click-icon lucide-mouse-pointer-click'><path d='M14 4.1 12 6'/><path d='m5.1 8-2.9-.8'/><path d='m6 12-1.9 2'/><path d='M7.2 2.2 8 5.1'/><path d='M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z'/></svg>",
         "large": true,
         "title": "Naviguer sur GeoSanté",
-        "content": `<div>Utilisez la barre de navigation pour accéder aux différents outils de GeoSanté.
-        Chaque icône vous permet d'explorer les données sous un angle précis.</div>
+        "content": `<div>Utilisez la barre de navigation pour accéder aux différents modules de GeoSanté. 
+        Chaque icône correspond à un outil d'analyse distinct, conçu pour interroger les données sous un angle spécifique et complémentaire.</div>
             <div class="tour-content-block">
                 <div class="tour-content-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
@@ -79,9 +79,9 @@ const MAIN_TOUR = {
                     </svg>
                 </div>
                 <div class="tcb-text">
-                    Ajoutez des indicateurs de santé directement sur la carte.
-            Choisissez parmi 146 indicateurs et visualisez-les pour une année précise
-            ou sous forme de séries temporelles couvrant plus de 20 ans. 
+                    Le module de <span style="color:#fff;">visualisation cartographique</span> permet d'intégrer directement des indicateurs de santé sur le territoire. L'utilisateur peut sélectionner 
+                    parmi de nombreux indicateurs et les représenter pour une année donnée ou sous forme de séries temporelles, 
+                    afin d'analyser la distribution spatiale et son évolution dans le temps. 
                 </div>
             </div>
             <div class="tour-content-block">
@@ -94,7 +94,9 @@ const MAIN_TOUR = {
                     </svg>
                 </div>
                 <div class="tcb-text">
-                    Analysez l'évolution des indicateurs dans le temps selon les divisions géographiques (RLS, RTS ou RSS). Identifiez rapidement les tendances, les écarts entre les territoires et les changements structurels.
+                    Le module des <span style="color:#fff;">tendances</span> sert à analyser l'évolution des indicateurs dans le temps selon différentes 
+                    divisions géographiques (RLS, RTS ou RSS). Il permet d'identifier rapidement les dynamiques de long terme, 
+                    les ruptures structurelles et les écarts persistants ou émergents entre territoires.
                 </div>
             </div>
             <div class="tour-content-block">
@@ -111,7 +113,9 @@ const MAIN_TOUR = {
                     </svg>
                 </div>
                 <div class="tcb-text">
-                    Mettre du texte ici pour dispersion
+                    Le module des <span style="color:#fff;">dispersions et inégalités</span> permettent de visualiser l'évolution des écarts entre RLS à l'aide d'indicateurs de distribution 
+                    (écarts interdéciles, interquartiles, territoires les plus favorisés versus les plus défavorisés). Cet outil est central pour 
+                    mesurer et suivre dans le temps les inégalités d'accès aux services et les disparités de santé.
                 </div>
             </div>
             <div class="tour-content-block">
@@ -126,7 +130,8 @@ const MAIN_TOUR = {
                     </svg>
                 </div>
                 <div class="tcb-text">
-                    Mettre du texte ici pour couches thématiques
+                    Les <span style="color:#fff;">couches thématiques</span> (établissements de santé, infrastructures, expositions environnementales, etc.) complètent l'analyse en contextualisant 
+                    les indicateurs de santé. Elles permettent d'évaluer l'adéquation des infrastructures, d'identifier les zones à risque et de croiser enjeux sanitaires et environnementaux.
                 </div>
             </div>
             <div class="tour-content-block">
@@ -139,7 +144,9 @@ const MAIN_TOUR = {
                     </svg>
                 </div>
                 <div class="tcb-text">
-                    Mettre du texte ici pour projets
+                    La section <span style="color:#fff;">projets</span> donne accès à des analyses ciblées répondant à des problématiques spécifiques, par exemple des études 
+                    sur le rationnement des services de santé, l'accessibilité aux soins en zones rurales ou l'impact de réformes organisationnelles. 
+                    Ces projets illustrent des usages concrets des données pour l'aide à la décision et l'évaluation des politiques publiques.
                 </div>
             </div>`,
         "content-justify": true,
@@ -162,7 +169,9 @@ const MAIN_TOUR = {
             </svg>`,
         "large": false,
         "title": "Visualisation cartographique",
-        "content": `<div>Ajoutez des indicateurs sur la carte. Par exemple, cliquez sur le <span style="color:var(--primary);font-weight:600">+</span> suivant pour ajouter une couche sur la carte ou cliquez simplement sur "Suivant" et nous le ferons pour vous.</div>`,
+        "content": `<div>Cliquez sur le <span style="color:var(--primary);font-weight:600">+</span> pour ajouter un indicateur sur la carte, et ce pour 
+        une année ou une période d'analyse. Vous pouvez également cliquer sur « Suivant » pour charger automatiquement une visualisation par défaut. 
+        La couche s'ajoute sur la carte, vous permettant de comparer les territoires et d'explorer la distribution spatiale des indicateurs de santé.</div>`,
         "content-justify": false,
         "position": "left-map-box",
         "highlight": ".map-box[data-nav='indicator']",
@@ -173,7 +182,9 @@ const MAIN_TOUR = {
         "icon": `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layers-icon lucide-layers"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>`,
         "large": false,
         "title": "Indicateurs actifs",
-        "content": `<div>Les indicateurs ajoutés apparaitront dans la légende</div>`,
+        "content": `<div>Les indicateurs ajoutés s'affichent dans la légende. Celle-ci permet de visualiser les couches actives, de comprendre l'échelle 
+        de valeurs, les classes de couleur et les unités utilisées. Vous pouvez y activer ou désactiver des indicateurs, ajuster leur ordre d'affichage 
+        et interpréter rapidement les différences observées entre territoires.</div>`,
         "content-justify": false,
         "position": "leg",
         "highlight": ".legend",
@@ -190,10 +201,9 @@ const MAIN_TOUR = {
                  </svg>`,
         "large": false,
         "title": "Tendances",
-        "content": `<div>Analysez l'évolution des indicateurs dans le temps selon les divisions géographiques.</div>
-                <div>Choisissez d'abord le <strong>niveau géographique</strong> auquel vous souhaitez visualiser vos tendances.</div>
-                <div>Choisissez ensuite l'<strong>indicateur de santé</strong>.</div>
-                <div>Sélectionnez finalement une ou plusieurs <strong>divisions géographiques</strong> que vous souhaitez analyser.</div>`,
+        "content": `<div>Analysez l'évolution des indicateurs dans le temps selon les divisions géographiques. Commencez par sélectionner le niveau géographique 
+        (RLS, RTS ou RSS), puis choisissez l'indicateur de santé à analyser. Sélectionnez enfin une ou plusieurs divisions géographiques afin de comparer leurs 
+        trajectoires, d'identifier des tendances de long terme et de repérer d'éventuelles ruptures ou convergences.</div>`,
         "content-justify": false,
         "position": "left-map-box",
         "highlight": ".map-box[data-nav='tendency']",
@@ -217,7 +227,9 @@ const MAIN_TOUR = {
                 </svg>`,
         "large": false,
         "title": "Dispersion",
-        "content": `Explorez la distribution et la dispersion des indicateurs à travers les territoires.`,
+        "content": `<div>Explorez la distribution et la dispersion des indicateurs entre territoires. Ce module permet de visualiser les écarts relatifs 
+        (interquartiles, interdéciles, territoires les plus favorisés versus les plus défavorisés) et d'analyser l'évolution des inégalités de santé 
+        et d'accès aux services dans le temps.</div>`,
         "content-justify": false,
         "position": "left-map-box",
         "highlight": ".map-box[data-nav='dispersion']",
@@ -235,7 +247,9 @@ const MAIN_TOUR = {
                 </svg>`,
         "large": false,
         "title": "Couches thématiques",
-        "content": `Ajoutez des couches thématiques supplémentaires pour enrichir votre analyse cartographique.`,
+        "content": `<div>Ajoutez des couches thématiques pour enrichir votre analyse cartographique, telles que les établissements de santé, 
+        les infrastructures ou les facteurs environnementaux. Ces couches permettent de contextualiser les indicateurs, d'évaluer l'adéquation 
+        de l'offre et d'identifier des zones de vulnérabilité ou de risque.</div>`,
         "content-justify": false,
         "position": "left-map-box",
         "highlight": ".map-box[data-nav='layer']",
@@ -251,7 +265,9 @@ const MAIN_TOUR = {
                 </svg>`,
         "large": false,
         "title": "Projets",
-        "content": `Explorez les projets thématiques disponibles sur la plateforme GeoSanté.`,
+        "content": `<div>Explorez les projets thématiques disponibles sur la plateforme GeoSanté. Cette section regroupe des analyses ciblées, par exemple 
+        sur le rationnement des services, l'accessibilité aux soins ou l'évaluation de politiques publiques, illustrant des cas d'usage concrets des 
+        données pour l'aide à la décision.</div>`,
         "content-justify": false,
         "position": "left-map-box",
         "highlight": ".map-box[data-nav='project']",

@@ -538,6 +538,7 @@ $('#view-tendency').on('click', async function () {
             body: JSON.stringify([indicatorId, codeList, currentTendencyLevel]),
         });
         const data = await res.json();
+        console.log(data);
         currentTendencyData = data;
         currentTendencyId = indicatorId;
 

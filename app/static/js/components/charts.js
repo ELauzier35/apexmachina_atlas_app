@@ -578,6 +578,115 @@ export const tendencyChart = Highcharts.chart('container-tendency', {
         enabled: false
     }
 });
+export const dispersionChart = Highcharts.chart('container-dispersion', {
+    title: {
+        text: "",
+    },
+    chart: {
+        backgroundColor: null,
+        marginBottom: 70,
+        height: 'null',
+        type: "line",
+        style: {
+            fontFamily: 'Gotham-Book',
+            fontSize: "0.8rem"
+        },
+    },
+    yAxis: {
+        title: {
+            text: "",
+            style: {
+                color: "#979090",
+            }
+        },
+        labels: {
+            style: {
+                color: '#979090' // Blue labels
+            }
+        },
+        lineWidth: 1,
+        lineColor: "#979090",
+        gridLineWidth: 0
+    },
+    credits: {
+        enabled: false,
+    },
+    xAxis: {
+        categories: ['1996', '1997', '1998', '1999', '2000', '2001',
+            '2002', '2003', '2004', '2005', '2006', '2007', '2008',
+            '2009', '2010', '2011', '2012', '2013', '2014', '2015',
+            '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+        title: {
+            text: "Années",
+            style: {
+                color: "#979090",
+            }
+        },
+        labels: {
+            style: {
+                color: '#979090'
+            }
+        },
+        lineColor: "#979090",
+        accessibility: {
+            rangeDescription: "Période : 1996 to 2016",
+        },
+        gridLineWidth: 0,
+        tickLength: 0,
+
+    },
+    legend: {
+        layout: "horizontal",
+        align: "center",
+        itemDistance: 40,
+        verticalAlign: "bottom",
+        y: 25,
+        itemStyle: {
+            color: '#fff'
+        }
+    },
+    plotOptions: {
+        series: {
+            label: {
+                connectorAllowed: false,
+            },
+        },
+        line: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    series: [{
+        name: 'Décile',
+        data: data,
+        color: '#2F6DDB'
+    },
+    {
+        name: 'Quartile',
+        data: data2,
+        color: '#750bdfff'
+    }],
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500,
+                },
+                chartOptions: {
+                    legend: {
+                        layout: "horizontal",
+                        align: "center",
+                        verticalAlign: "bottom",
+                    },
+                },
+            },
+        ],
+    },
+    exporting: {
+        enabled: false
+    }
+});
 // export const cohortChart = Highcharts.chart('container-cohort', {
 //     title: {
 //         text: "",

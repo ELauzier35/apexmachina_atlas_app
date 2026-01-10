@@ -13,6 +13,7 @@ import {
 import {
     CATEGORY_DICT,
     SOURCE_DICT,
+    DISPERSION_INDICATORS
 } from "../global.js";
 import {
     THEMATIC_LAYER_DICT,
@@ -106,7 +107,8 @@ export async function createIndicatorList(ind_list = "all") {
 
             $("#indicatorList").append(ind_el);
 
-            let lsp_ind_el_disp = `<div class="lsp-bubble-box">
+            if (DISPERSION_INDICATORS.includes(indicator["id"])){
+                let lsp_ind_el_disp = `<div class="lsp-bubble-box">
                             <input type="radio" id="D${indicator["id"]}" name="lsp-indicators-disp" value="${indicator["id"]}" />
                             <label for="D${indicator["id"]}" class="lsp-indicators-label">
                                 <div class="check-disp">
@@ -116,7 +118,8 @@ export async function createIndicatorList(ind_list = "all") {
                             </label>
                         </div>`;
 
-            $("#lspIndicatorListDispersion").append(lsp_ind_el_disp);
+                $("#lspIndicatorListDispersion").append(lsp_ind_el_disp);
+            }
 
             let lsp_ind_el = `<div class="lsp-bubble-box">
                             <input type="radio" id="R${indicator["id"]}" name="lsp-indicators" value="${indicator["id"]}" />

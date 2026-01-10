@@ -534,7 +534,7 @@ export function seeSpecificBasemap(layertitle) {
     baseLayerGroup.getLayers().forEach(function (element) {
         let baseLayerTitle = element.get('title');
         if (baseLayerTitle == layertitle) {
-            let thumbpath = "url('../../../static/image/thumbnails/thumbnail_" + String(layertitle) + ".JPG')";
+            let thumbpath = "url('../../../static/image/thumbnails/thumbnail_" + String(layertitle) + ".jpg')";
             element.setVisible(true);
             $('#basemap-preview').css('background-image', thumbpath);
         } else {
@@ -755,7 +755,7 @@ export async function displayStepsWithDelay(stepList, layerName) {
 $('#switcher').click(function () {
     BASE_LAYERS[currentBasemap].setVisible(false);
     BASEMAP_NEXT[currentBasemap][1].setVisible(true);
-    let thumbpath = "url('../../../static/image/thumbnails/thumbnail_" + BASEMAP_NEXT[currentBasemap][0] + ".JPG')";
+    let thumbpath = "url('../../../static/image/thumbnails/thumbnail_" + BASEMAP_NEXT[currentBasemap][0] + ".jpg')";
     currentBasemap = BASEMAP_NEXT[currentBasemap][0];
     if (currentBasemap == 'satLayer') {
         document.documentElement.style.setProperty('--mapbox-bg', 'rgba(0, 11, 22, 0.45)');

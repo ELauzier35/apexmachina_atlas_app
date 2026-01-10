@@ -1,0 +1,49 @@
+services:
+  web:
+    image: geosante
+    volumes:
+        - .:/app
+    ports:
+      - "5050:5050"
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=atlas
+      - MONGO_AUTH_SOURCE=atlas
+    env_file:
+      - .env 
+    depends_on:
+      - mongo
+    secrets:
+      - mongo_app_username
+      - mongo_app_password
+
+  mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo_root_username
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_root_password
+    secrets:
+      - mongo_root_username
+      - mongo_root_password
+      - mongo_app_username
+      - mongo_app_password
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./init-scripts/mongo-init:/docker-entrypoint-initdb.d:ro
+      - ./bootstrap/mongo:/bootstrap/mongo:ro
+
+volumes:
+  mongo_data:
+
+secrets:
+  mongo_root_username:
+    file: ./secrets/mongo/mongo_root_username.txt
+  mongo_root_password:
+    file: ./secrets/mongo/mongo_root_password.txt
+  mongo_app_username:
+    file: ./secrets/mongo/mongo_app_username.txt
+  mongo_app_password:
+    file: ./secrets/mongo/mongo_app_password.txt

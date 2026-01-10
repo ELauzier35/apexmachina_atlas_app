@@ -5,7 +5,7 @@ Created on Fri Dec 13 09:11:13 2024
 @author: Etienne
 """
 
-from app.db import indicators_atlas, indicators_atlas_cohorte
+from app.db import indicators_atlas, indicators_atlas_cohorte, dispersion
 import math
 from collections import defaultdict
 
@@ -104,6 +104,24 @@ def query_tendencies_coh(ind_id, coh_codes):
             time_series.append(ind_object_data[str(year)].get(code, None))
         
         full_output_dict[code] = time_series
+    
+    return full_output_dict
+
+
+def query_dispersion(ind_id):
+
+    full_output_dict = {}
+    
+    ind_object = dispersion.find_one({'id' : {'$eq': ind_id}}, {"_id": 0})
+    ind_object_data = ind_object['data']
+    
+    for type in ['decile', 'quartile']:
+        time_series = []
+        
+        for year in range(1996, 2017):
+            time_series.append(ind_object_data[type][str(year)])
+        
+        full_output_dict[type] = time_series
     
     return full_output_dict
 
